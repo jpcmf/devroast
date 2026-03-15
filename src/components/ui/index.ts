@@ -21,3 +21,9 @@ export {
 	type CardTitleProps,
 	type CardDescriptionProps,
 } from "./Card";
+export {
+	BadgeStatus,
+	badgeStatusVariants,
+	badgeDotVariants,
+	type BadgeStatusProps,
+} from "./BadgeStatus";
