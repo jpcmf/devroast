@@ -9,11 +9,11 @@ console.log(result);`;
 
 export default function ExamplesPage() {
 	return (
-		<div className="min-h-screen bg-white p-8">
+		<div className="min-h-screen bg-gray-950 p-8">
 			<div className="max-w-4xl mx-auto space-y-12">
 				{/* Buttons Section */}
 				<section>
-					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono text-gray-100">
 						{`// `}
 						<span className="text-emerald-500">buttons</span>
 					</h2>
@@ -21,11 +21,11 @@ export default function ExamplesPage() {
 					<div className="space-y-6">
 						{/* Main Button Example */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>main buttons</span>
 							</h3>
-							<div className="flex items-center gap-4 p-4 bg-gray-50 rounded">
+							<div className="flex items-center gap-4 p-4 bg-gray-900 rounded">
 								<Button variant="primary" size="md">
 									$ roast_my_code
 								</Button>
@@ -42,11 +42,11 @@ export default function ExamplesPage() {
 
 						{/* All Variants */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>all variants</span>
 							</h3>
-							<div className="space-y-4 p-4 bg-gray-50 rounded">
+							<div className="space-y-4 p-4 bg-gray-900 rounded">
 								<div className="flex gap-4 flex-wrap">
 									<Button variant="primary">Primary</Button>
 									<Button variant="secondary">Secondary</Button>
@@ -55,8 +55,8 @@ export default function ExamplesPage() {
 									<Button variant="ghost">Ghost</Button>
 								</div>
 
-								<div className="border-t pt-4">
-									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">sizes:</p>
+								<div className="border-t border-gray-700 pt-4">
+									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">sizes:</p>
 									<div className="flex gap-4 flex-wrap">
 										<Button variant="primary" size="sm">
 											Small
@@ -70,8 +70,8 @@ export default function ExamplesPage() {
 									</div>
 								</div>
 
-								<div className="border-t pt-4">
-									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">
+								<div className="border-t border-gray-700 pt-4">
+									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
 										disabled:
 									</p>
 									<div className="flex gap-4 flex-wrap">
@@ -92,8 +92,8 @@ export default function ExamplesPage() {
 				</section>
 
 				{/* Toggle Section */}
-				<section className="border-t pt-12">
-					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+				<section className="border-t border-gray-700 pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono text-gray-100">
 						{`// `}
 						<span className="text-emerald-500">toggle</span>
 					</h2>
@@ -101,11 +101,11 @@ export default function ExamplesPage() {
 					<div className="space-y-6">
 						{/* Main Toggle Example */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>main toggles</span>
 							</h3>
-							<div className="flex items-center gap-12 p-4 bg-gray-50 rounded">
+							<div className="flex items-center gap-12 p-4 bg-gray-900 rounded">
 								<Toggle defaultChecked label="roast mode" />
 								<Toggle defaultChecked={false} label="roast mode" />
 							</div>
@@ -113,19 +113,19 @@ export default function ExamplesPage() {
 
 						{/* All Variants */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>all variants</span>
 							</h3>
-							<div className="space-y-4 p-4 bg-gray-50 rounded">
+							<div className="space-y-4 p-4 bg-gray-900 rounded">
 								<div className="flex gap-8 flex-wrap items-center">
 									<Toggle defaultChecked size="sm" label="Small" />
 									<Toggle defaultChecked size="md" label="Medium" />
 									<Toggle defaultChecked size="lg" label="Large" />
 								</div>
 
-								<div className="border-t pt-4">
-									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">
+								<div className="border-t border-gray-700 pt-4">
+									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
 										off state:
 									</p>
 									<div className="flex gap-8 flex-wrap items-center">
@@ -135,8 +135,8 @@ export default function ExamplesPage() {
 									</div>
 								</div>
 
-								<div className="border-t pt-4">
-									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">
+								<div className="border-t border-gray-700 pt-4">
+									<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
 										disabled:
 									</p>
 									<div className="flex gap-8 flex-wrap items-center">
@@ -150,8 +150,8 @@ export default function ExamplesPage() {
 				</section>
 
 				{/* CodeBlock Section */}
-				<section className="border-t pt-12">
-					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+				<section className="border-t border-gray-700 pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono text-gray-100">
 						{`// `}
 						<span className="text-emerald-500">code_block</span>
 					</h2>
@@ -159,7 +159,7 @@ export default function ExamplesPage() {
 					<div className="space-y-6">
 						{/* JavaScript Example */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>javascript</span>
 							</h3>
@@ -168,7 +168,7 @@ export default function ExamplesPage() {
 
 						{/* TypeScript Example */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>typescript</span>
 							</h3>
@@ -211,8 +211,8 @@ print(result)`}
 				</section>
 
 				{/* Card Section */}
-				<section className="border-t pt-12">
-					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+				<section className="border-t border-gray-700 pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono text-gray-100">
 						{`// `}
 						<span className="text-emerald-500">cards</span>
 					</h2>
@@ -220,11 +220,11 @@ print(result)`}
 					<div className="space-y-6">
 						{/* Main Card Example */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>main card</span>
 							</h3>
-							<div className="p-4 bg-gray-50 rounded">
+							<div className="p-4 bg-gray-900 rounded">
 								<Card>
 									<Card.Header>
 										<Card.Badge variant="critical" />
@@ -242,11 +242,11 @@ print(result)`}
 
 						{/* All Variants */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>all variants</span>
 							</h3>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded">
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-900 rounded">
 								<Card>
 									<Card.Header>
 										<Card.Badge variant="critical" />
@@ -300,8 +300,8 @@ print(result)`}
 				</section>
 
 				{/* BadgeStatus Section */}
-				<section className="border-t pt-12">
-					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+				<section className="border-t border-gray-700 pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono text-gray-100">
 						{`// `}
 						<span className="text-emerald-500">badge_status</span>
 					</h2>
@@ -309,11 +309,11 @@ print(result)`}
 					<div className="space-y-6">
 						{/* Main Badge Examples */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>main badges</span>
 							</h3>
-							<div className="flex items-center gap-6 p-4 bg-gray-50 rounded flex-wrap">
+							<div className="flex items-center gap-6 p-4 bg-gray-900 rounded flex-wrap">
 								<BadgeStatus variant="critical">critical</BadgeStatus>
 								<BadgeStatus variant="warning">warning</BadgeStatus>
 								<BadgeStatus variant="good">good</BadgeStatus>
@@ -323,29 +323,29 @@ print(result)`}
 
 						{/* All Variants */}
 						<div>
-							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-400">
 								{`$ `}
 								<span>all variants</span>
 							</h3>
-							<div className="space-y-4 p-4 bg-gray-50 rounded">
+							<div className="space-y-4 p-4 bg-gray-900 rounded">
 								<div className="flex items-center gap-8 flex-wrap">
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">critical:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">critical:</p>
 										<BadgeStatus variant="critical">critical</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">warning:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">warning:</p>
 										<BadgeStatus variant="warning">warning</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">good:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">good:</p>
 										<BadgeStatus variant="good">good</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">needs help:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">needs help:</p>
 										<BadgeStatus variant="needs_serious_help">needs_serious_help</BadgeStatus>
 									</div>
 								</div>
