@@ -179,24 +179,4 @@ The following components are designed but deferred until feature building:
 
 Build these only when their respective pages are implemented.
 
-## File Locations Quick Reference
 
-```
-src/
-├── app/
-│   ├── layout.tsx              # Root layout with navbar
-│   ├── page.tsx                # Home page
-│   ├── globals.css             # Tailwind CSS import
-│   └── examples/page.tsx       # Component examples
-├── components/
-│   ├── index.ts                # Main barrel export
-│   └── ui/
-│       ├── Button.tsx
-│       ├── Toggle.tsx
-│       ├── Card.tsx
-│       ├── BadgeStatus.tsx
-│       ├── CodeBlock.tsx
-│       └── index.ts
-└── types/
-    └── css.d.ts                # CSS module types
-```
