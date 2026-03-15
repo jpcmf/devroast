@@ -42,9 +42,7 @@ async function CodeBlock({
 				<div className="flex-1" />
 
 				{/* Filename */}
-				<span className="text-xs font-normal text-gray-500 font-jetbrains-mono">
-					{filename}
-				</span>
+				<span className="text-xs font-normal text-gray-500 font-jetbrains-mono">{filename}</span>
 			</div>
 
 			{/* Code Body */}
