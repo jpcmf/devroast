@@ -1,6 +1,14 @@
+'use client'
+
+import { useState } from "react";
 import { Button, Toggle } from "@/components";
 
 export default function Home() {
+	const [code, setCode] = useState("");
+	const [roastMode, setRoastMode] = useState(false);
+
+	const isCodeEmpty = code.trim().length === 0;
+
 	return (
 		<div className="min-h-screen">
 			{/* Main Content */}
@@ -37,7 +45,8 @@ export default function Home() {
   return 'roast me!';
 }"
 								className="h-64 w-full resize-none bg-transparent text-gray-300 placeholder-gray-600 focus:outline-none"
-								defaultValue=""
+								value={code}
+								onChange={(e) => setCode(e.target.value)}
 							/>
 						</div>
 					</div>
@@ -45,10 +54,14 @@ export default function Home() {
 					{/* Actions Bar */}
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-4">
-							<Toggle defaultChecked={false} label="roast mode" />
+							<Toggle 
+								checked={roastMode} 
+								onChange={(e) => setRoastMode(e.target.checked)} 
+								label="roast mode" 
+							/>
 							<span className="text-xs text-gray-500 font-jetbrains-mono">standard mode</span>
 						</div>
-						<Button variant="primary" size="md">
+						<Button variant="primary" size="md" disabled={isCodeEmpty}>
 							{`$ start the roast`}
 						</Button>
 					</div>
