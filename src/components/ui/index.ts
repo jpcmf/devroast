@@ -5,3 +5,4 @@ export {
 	knobVariants,
 	type ToggleProps,
 } from "./Toggle";
+export { CodeBlock, type CodeBlockProps } from "./CodeBlock";
