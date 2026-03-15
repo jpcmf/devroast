@@ -90,35 +90,36 @@ export default function Home() {
 							</p>
 						</div>
 						<a href="/" className="text-xs text-emerald-500 font-jetbrains-mono hover:text-emerald-400 transition-colors">
-							see all →
+							$ view_all &gt;&gt;
 						</a>
 					</div>
 
 					{/* Leaderboard Table Preview */}
-					<div className="rounded-lg border border-gray-700 bg-gray-900 overflow-hidden">
-						{/* Table Header */}
-						<div className="flex items-center gap-4 border-b border-gray-700 bg-gray-800 px-6 py-3 text-xs font-bold text-gray-400 font-jetbrains-mono">
-							<div className="w-12">#</div>
+					<div className="border border-gray-700 bg-gray-900 overflow-hidden">
+						{/* Table Header - Pixel Perfect: height 40, padding 0 vertical + 20 horizontal, centered items */}
+						<div className="flex items-center border-b border-gray-700 bg-gray-800 px-5 text-xs font-bold text-gray-400 font-jetbrains-mono" style={{ height: '40px' }}>
+							<div style={{ width: '50px' }}>#</div>
+							<div style={{ width: '70px' }}>score</div>
 							<div className="flex-1">code</div>
-							<div className="w-20">score</div>
-							<div className="w-20">roasts</div>
+							<div style={{ width: '100px' }}>lang</div>
 						</div>
 
-						{/* Table Rows */}
-						<div className="space-y-0">
+						{/* Table Rows - Pixel Perfect: padding 16 vertical + 20 horizontal */}
+						<div>
 							{[
-								{ rank: 1, code: "eval(user_input)", score: "1/10", roasts: "2,341" },
-								{ rank: 2, code: "var x = y = z = 1", score: "1.5/10", roasts: "1,892" },
-								{ rank: 3, code: "if (x == true) {...}", score: "2/10", roasts: "1,654" },
+								{ rank: 1, score: "1.2", code: "eval(prompt(\"enter code\"))", lang: "javascript" },
+								{ rank: 2, score: "1.8", code: "if (x == true) { return true; }", lang: "typescript" },
+								{ rank: 3, score: "2.1", code: "SELECT * FROM users WHERE 1=1", lang: "sql" },
 							].map((item) => (
 								<div
 									key={item.rank}
-									className="flex items-center gap-4 border-b border-gray-700 px-6 py-3 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors"
+									className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors"
+									style={{ height: '48px' }}
 								>
-									<div className="w-12 font-bold text-gray-500">{item.rank}</div>
+									<div style={{ width: '50px' }} className="font-bold text-gray-500">{item.rank}</div>
+									<div style={{ width: '70px' }} className="font-bold text-red-400">{item.score}</div>
 									<div className="flex-1 text-gray-300">{item.code}</div>
-									<div className="w-20 text-red-400">{item.score}</div>
-									<div className="w-20 text-gray-500">{item.roasts}</div>
+									<div style={{ width: '100px' }} className="text-gray-500">{item.lang}</div>
 								</div>
 							))}
 						</div>
@@ -126,7 +127,7 @@ export default function Home() {
 
 					{/* View More Hint */}
 					<div className="flex items-center justify-center py-4 text-xs text-gray-600 font-jetbrains-mono">
-						scroll or <a href="/" className="text-emerald-500 hover:text-emerald-400 ml-1">see all</a>
+						showing top 3 of 2,847 · <a href="/" className="text-emerald-500 hover:text-emerald-400 ml-1">view full leaderboard &gt;&gt;</a>
 					</div>
 				</div>
 
