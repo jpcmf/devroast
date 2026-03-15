@@ -15,7 +15,26 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" className={jetBrainsMono.variable}>
-			<body>{children}</body>
+			<body className="bg-gray-950">
+				{/* Navbar */}
+				<nav className="border-b border-gray-700 bg-gray-950 px-10 py-3.5 flex items-center justify-between sticky top-0 z-50">
+					{/* Logo */}
+					<a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+						<span className="text-xl font-bold text-emerald-500 font-jetbrains-mono">{`>`}</span>
+						<span className="text-lg font-medium text-gray-100 font-jetbrains-mono">devroast</span>
+					</a>
+
+					{/* Nav Links */}
+					<div className="flex items-center gap-6">
+						<a href="/" className="text-sm text-gray-400 font-jetbrains-mono hover:text-gray-100 transition-colors">
+							leaderboard
+						</a>
+					</div>
+				</nav>
+
+				{/* Page Content */}
+				{children}
+			</body>
 		</html>
 	);
 }
