@@ -95,17 +95,16 @@ const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
 						})}
 					/>
 				</div>
-				{label && (
-					<label
-						htmlFor={inputId}
-						className="text-sm font-normal font-jetbrains-mono"
-						style={{
-							color: currentChecked ? "#10b981" : "#9ca3af",
-						}}
-					>
-						{label}
-					</label>
-				)}
+			{label && (
+				<label
+					htmlFor={inputId}
+					className={`text-sm font-normal font-jetbrains-mono ${
+						currentChecked ? "text-emerald-500" : "text-gray-400"
+					}`}
+				>
+					{label}
+				</label>
+			)}
 			</div>
 		);
 	},
