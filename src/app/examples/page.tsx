@@ -1,4 +1,4 @@
-import { Button, Toggle, CodeBlock } from "@/components";
+import { Button, Toggle, CodeBlock, Card } from "@/components";
 
 const codeExample = `function calculateSum(a, b) {
   return a + b;
@@ -206,6 +206,95 @@ print(result)`}
 								language="python"
 								filename="fibonacci.py"
 							/>
+						</div>
+					</div>
+				</section>
+
+				{/* Card Section */}
+				<section className="border-t pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+						{`// `}
+						<span className="text-emerald-500">cards</span>
+					</h2>
+
+					<div className="space-y-6">
+						{/* Main Card Example */}
+						<div>
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+								{`$ `}
+								<span>main card</span>
+							</h3>
+							<div className="p-4 bg-gray-50 rounded">
+								<Card>
+									<Card.Header>
+										<Card.Badge variant="critical" />
+										<Card.Label>critical</Card.Label>
+									</Card.Header>
+									<Card.Title>using var instead of const/let</Card.Title>
+									<Card.Description>
+										the var keyword is function-scoped rather than block-scoped, which can lead to
+										unexpected behavior and bugs. modern javascript uses const for immutable
+										bindings and let for mutable ones.
+									</Card.Description>
+								</Card>
+							</div>
+						</div>
+
+						{/* All Variants */}
+						<div>
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+								{`$ `}
+								<span>all variants</span>
+							</h3>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded">
+								<Card>
+									<Card.Header>
+										<Card.Badge variant="critical" />
+										<Card.Label>critical</Card.Label>
+									</Card.Header>
+									<Card.Title>Unsafe variable declaration</Card.Title>
+									<Card.Description>
+										Using var instead of const/let can lead to unexpected behavior due to
+										function-scoping.
+									</Card.Description>
+								</Card>
+
+								<Card>
+									<Card.Header>
+										<Card.Badge variant="warning" />
+										<Card.Label>warning</Card.Label>
+									</Card.Header>
+									<Card.Title>Performance concern</Card.Title>
+									<Card.Description>
+										This operation has O(n²) complexity. Consider using a more efficient algorithm
+										for better performance.
+									</Card.Description>
+								</Card>
+
+								<Card>
+									<Card.Header>
+										<Card.Badge variant="info" />
+										<Card.Label>info</Card.Label>
+									</Card.Header>
+									<Card.Title>Code style suggestion</Card.Title>
+									<Card.Description>
+										Following consistent naming conventions improves code readability and
+										maintainability.
+									</Card.Description>
+								</Card>
+
+								<Card>
+									<Card.Header>
+										<Card.Badge variant="success" />
+										<Card.Label>success</Card.Label>
+									</Card.Header>
+									<Card.Title>Best practice applied</Card.Title>
+									<Card.Description>
+										Good use of functional programming paradigm. This approach is clean and
+										maintainable.
+									</Card.Description>
+								</Card>
+							</div>
 						</div>
 					</div>
 				</section>
