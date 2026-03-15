@@ -1,4 +1,4 @@
-import { Button, Toggle, CodeBlock, Card } from "@/components";
+import { Button, Toggle, CodeBlock, Card, BadgeStatus } from "@/components";
 
 const codeExample = `function calculateSum(a, b) {
   return a + b;
@@ -294,6 +294,61 @@ print(result)`}
 										maintainable.
 									</Card.Description>
 								</Card>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* BadgeStatus Section */}
+				<section className="border-t pt-12">
+					<h2 className="text-lg font-bold mb-6 font-jetbrains-mono">
+						{`// `}
+						<span className="text-emerald-500">badge_status</span>
+					</h2>
+
+					<div className="space-y-6">
+						{/* Main Badge Examples */}
+						<div>
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+								{`$ `}
+								<span>main badges</span>
+							</h3>
+							<div className="flex items-center gap-6 p-4 bg-gray-50 rounded flex-wrap">
+								<BadgeStatus variant="critical">critical</BadgeStatus>
+								<BadgeStatus variant="warning">warning</BadgeStatus>
+								<BadgeStatus variant="good">good</BadgeStatus>
+								<BadgeStatus variant="needs_serious_help">needs_serious_help</BadgeStatus>
+							</div>
+						</div>
+
+						{/* All Variants */}
+						<div>
+							<h3 className="text-sm font-bold mb-4 font-jetbrains-mono text-gray-600">
+								{`$ `}
+								<span>all variants</span>
+							</h3>
+							<div className="space-y-4 p-4 bg-gray-50 rounded">
+								<div className="flex items-center gap-8 flex-wrap">
+									<div>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">critical:</p>
+										<BadgeStatus variant="critical">critical</BadgeStatus>
+									</div>
+
+									<div>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">warning:</p>
+										<BadgeStatus variant="warning">warning</BadgeStatus>
+									</div>
+
+									<div>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">good:</p>
+										<BadgeStatus variant="good">good</BadgeStatus>
+									</div>
+
+									<div>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-600">needs help:</p>
+										<BadgeStatus variant="needs_serious_help">needs_serious_help</BadgeStatus>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
