@@ -330,22 +330,30 @@ print(result)`}
 							<div className="space-y-4 p-4 bg-gray-900 rounded">
 								<div className="flex items-center gap-8 flex-wrap">
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">critical:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
+											critical:
+										</p>
 										<BadgeStatus variant="critical">critical</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">warning:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
+											warning:
+										</p>
 										<BadgeStatus variant="warning">warning</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">good:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
+											good:
+										</p>
 										<BadgeStatus variant="good">good</BadgeStatus>
 									</div>
 
 									<div>
-										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">needs help:</p>
+										<p className="text-xs font-bold mb-3 font-jetbrains-mono text-gray-400">
+											needs help:
+										</p>
 										<BadgeStatus variant="needs_serious_help">needs_serious_help</BadgeStatus>
 									</div>
 								</div>
