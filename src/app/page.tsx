@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Toggle } from "@/components";
+import { Button, Toggle, CodeEditor } from "@/components";
 
 export default function Home() {
 	const [code, setCode] = useState("");
@@ -40,15 +40,11 @@ export default function Home() {
 						</div>
 
 						{/* Code Area */}
-						<div className="min-h-80 p-6 font-jetbrains-mono text-sm text-gray-300">
-							<textarea
-								placeholder="function myAwesomeCode() {
-  // your code here
-  return 'roast me!';
-}"
-								className="h-64 w-full resize-none bg-transparent text-gray-300 placeholder-gray-600 focus:outline-none"
+						<div className="p-4">
+							<CodeEditor
 								value={code}
-								onChange={(e) => setCode(e.target.value)}
+								onChange={setCode}
+								onLanguageChange={(lang) => console.log("Language:", lang)}
 							/>
 						</div>
 					</div>
@@ -61,7 +57,7 @@ export default function Home() {
 								onChange={(e) => setRoastMode(e.target.checked)}
 								label="roast mode"
 							/>
-							<span className="text-xs text-gray-500 font-jetbrains-mono">standard mode</span>
+							<span className="text-xs text-gray-500 font-jetbrains-mono">{`// maximum sarcasm enabled`}</span>
 						</div>
 						<Button variant="primary" size="md" disabled={isCodeEmpty}>
 							{`$ start the roast`}
