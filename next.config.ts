@@ -1,5 +1,13 @@
 import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {}
+const nextConfig: NextConfig = {
+	onDemandEntries: {
+		maxInactiveAge: 60 * 1000,
+		pagesBufferLength: 5,
+	},
+	turbopack: {
+		resolveAlias: {},
+	},
+}
 
 export default nextConfig
