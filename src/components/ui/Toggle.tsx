@@ -1,6 +1,6 @@
 "use client";
 
-import { InputHTMLAttributes, ChangeEvent, forwardRef, useId, useState } from "react";
+import { InputHTMLAttributes, ChangeEvent, forwardRef, useId, useState, memo } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 
 const toggleVariants = tv({
@@ -112,4 +112,7 @@ const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
 
 Toggle.displayName = "Toggle";
 
-export { Toggle, toggleVariants, knobVariants, type ToggleProps };
+const MemoizedToggle = memo(Toggle);
+MemoizedToggle.displayName = "Toggle";
+
+export { MemoizedToggle as Toggle, toggleVariants, knobVariants, type ToggleProps };
