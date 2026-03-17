@@ -42,11 +42,7 @@ interface BadgeStatusProps
 const BadgeStatus = forwardRef<HTMLDivElement, BadgeStatusProps>(
 	({ className, variant = "good", children, ...props }, ref) => {
 		return (
-			<div
-				ref={ref}
-				className={badgeStatusVariants({ variant, class: className })}
-				{...props}
-			>
+			<div ref={ref} className={badgeStatusVariants({ variant, class: className })} {...props}>
 				<div className={badgeDotVariants({ variant })} />
 				<span>{children}</span>
 			</div>
