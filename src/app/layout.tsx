@@ -5,6 +5,8 @@ import "./globals.css";
 const jetBrainsMono = JetBrains_Mono({
 	subsets: ["latin"],
 	variable: "--font-jetbrains-mono",
+	display: "swap",
+	preload: true,
 });
 
 export const metadata: Metadata = {
@@ -26,7 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 					{/* Nav Links */}
 					<div className="flex items-center gap-6">
-						<a href="/" className="text-sm text-gray-400 font-jetbrains-mono hover:text-gray-100 transition-colors">
+						<a
+							href="/"
+							className="text-sm text-gray-400 font-jetbrains-mono hover:text-gray-100 transition-colors"
+						>
 							leaderboard
 						</a>
 					</div>
