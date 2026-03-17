@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 import { Button, Toggle } from "@/components";
@@ -34,7 +34,9 @@ export default function Home() {
 								<div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
 								<div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
 							</div>
-							<span className="ml-auto text-xs text-gray-500 font-jetbrains-mono">paste your code here</span>
+							<span className="ml-auto text-xs text-gray-500 font-jetbrains-mono">
+								paste your code here
+							</span>
 						</div>
 
 						{/* Code Area */}
@@ -54,10 +56,10 @@ export default function Home() {
 					{/* Actions Bar */}
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-4">
-							<Toggle 
-								checked={roastMode} 
-								onChange={(e) => setRoastMode(e.target.checked)} 
-								label="roast mode" 
+							<Toggle
+								checked={roastMode}
+								onChange={(e) => setRoastMode(e.target.checked)}
+								label="roast mode"
 							/>
 							<span className="text-xs text-gray-500 font-jetbrains-mono">standard mode</span>
 						</div>
@@ -89,7 +91,10 @@ export default function Home() {
 								{`// the worst code on the internet, ranked by shame`}
 							</p>
 						</div>
-						<a href="/" className="text-xs text-emerald-500 font-jetbrains-mono hover:text-emerald-400 transition-colors">
+						<a
+							href="/"
+							className="text-xs text-emerald-500 font-jetbrains-mono hover:text-emerald-400 transition-colors"
+						>
 							$ view_all &gt;&gt;
 						</a>
 					</div>
@@ -97,29 +102,33 @@ export default function Home() {
 					{/* Leaderboard Table Preview */}
 					<div className="border border-gray-700 bg-gray-900 overflow-hidden">
 						{/* Table Header - Pixel Perfect: height 40, padding 0 vertical + 20 horizontal, centered items */}
-						<div className="flex items-center border-b border-gray-700 bg-gray-800 px-5 text-xs font-bold text-gray-400 font-jetbrains-mono" style={{ height: '40px' }}>
-							<div style={{ width: '50px' }}>#</div>
-							<div style={{ width: '70px' }}>score</div>
+						<div className="flex items-center border-b border-gray-700 bg-gray-800 px-5 text-xs font-bold text-gray-400 font-jetbrains-mono h-10">
+							<div className="w-12">#</div>
+							<div className="w-[70px]">score</div>
 							<div className="flex-1">code</div>
-							<div style={{ width: '100px' }}>lang</div>
+							<div className="w-[100px]">lang</div>
 						</div>
 
 						{/* Table Rows - Pixel Perfect: padding 16 vertical + 20 horizontal */}
 						<div>
 							{[
-								{ rank: 1, score: "1.2", code: "eval(prompt(\"enter code\"))", lang: "javascript" },
-								{ rank: 2, score: "1.8", code: "if (x == true) { return true; }", lang: "typescript" },
+								{ rank: 1, score: "1.2", code: 'eval(prompt("enter code"))', lang: "javascript" },
+								{
+									rank: 2,
+									score: "1.8",
+									code: "if (x == true) { return true; }",
+									lang: "typescript",
+								},
 								{ rank: 3, score: "2.1", code: "SELECT * FROM users WHERE 1=1", lang: "sql" },
 							].map((item) => (
 								<div
 									key={item.rank}
-									className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors"
-									style={{ height: '48px' }}
+									className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12"
 								>
-									<div style={{ width: '50px' }} className="font-bold text-gray-500">{item.rank}</div>
-									<div style={{ width: '70px' }} className="font-bold text-red-400">{item.score}</div>
+									<div className="w-12 font-bold text-gray-500">{item.rank}</div>
+									<div className="w-[70px] font-bold text-red-400">{item.score}</div>
 									<div className="flex-1 text-gray-300">{item.code}</div>
-									<div style={{ width: '100px' }} className="text-gray-500">{item.lang}</div>
+									<div className="w-[100px] text-gray-500">{item.lang}</div>
 								</div>
 							))}
 						</div>
@@ -127,7 +136,10 @@ export default function Home() {
 
 					{/* View More Hint */}
 					<div className="flex items-center justify-center py-4 text-xs text-gray-600 font-jetbrains-mono">
-						showing top 3 of 2,847 · <a href="/" className="text-emerald-500 hover:text-emerald-400 ml-1">view full leaderboard &gt;&gt;</a>
+						showing top 3 of 2,847 ·{" "}
+						<a href="/" className="text-emerald-500 hover:text-emerald-400 ml-1">
+							view full leaderboard &gt;&gt;
+						</a>
 					</div>
 				</div>
 
