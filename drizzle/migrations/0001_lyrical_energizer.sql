@@ -1,0 +1,1 @@
+ALTER TABLE "roasts" ALTER COLUMN "badges" SET DEFAULT '{}';
