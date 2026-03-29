@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS "roasts" (
 	"rank_position" integer,
 	"severity_rating" integer NOT NULL,
 	"critical_issues_count" integer DEFAULT 0,
-	"badges" text[] DEFAULT ,
+	"badges" text[] DEFAULT '{}',
 	"last_ranked_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
