@@ -1,4 +1,6 @@
 {
+  "id": "dd3aaedd-bb11-44ae-b5df-05278f4ff2eb",
+  "prevId": "17526a9e-90b0-40ad-8dde-037590a29a7c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -22,6 +24,7 @@
         "feedback_type": {
           "name": "feedback_type",
           "type": "feedback_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -65,22 +68,22 @@
         "feedback_submission_id_submissions_id_fk": {
           "name": "feedback_submission_id_submissions_id_fk",
           "tableFrom": "feedback",
+          "tableTo": "submissions",
           "columnsFrom": [
             "submission_id"
           ],
-          "tableTo": "submissions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "isRLSEnabled": false,
-      "checkConstraints": {}
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
     "public.roasts": {
       "name": "roasts",
@@ -123,7 +126,7 @@
           "type": "text[]",
           "primaryKey": false,
           "notNull": false,
-          "default": []
+          "default": "'{}'"
         },
         "last_ranked_at": {
           "name": "last_ranked_at",
@@ -151,30 +154,30 @@
         "roasts_submission_id_submissions_id_fk": {
           "name": "roasts_submission_id_submissions_id_fk",
           "tableFrom": "roasts",
+          "tableTo": "submissions",
           "columnsFrom": [
             "submission_id"
           ],
-          "tableTo": "submissions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "roasts_submission_id_unique": {
           "name": "roasts_submission_id_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "submission_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
-      "isRLSEnabled": false,
-      "checkConstraints": {}
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
     "public.submissions": {
       "name": "submissions",
@@ -196,6 +199,7 @@
         "language": {
           "name": "language",
           "type": "programming_language",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -252,8 +256,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "isRLSEnabled": false,
-      "checkConstraints": {}
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -334,15 +338,13 @@
     }
   },
   "schemas": {},
-  "_meta": {
-    "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "17526a9e-90b0-40ad-8dde-037590a29a7c",
-  "prevId": "00000000-0000-0000-0000-000000000000",
   "sequences": {},
+  "roles": {},
   "policies": {},
   "views": {},
-  "roles": {}
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
 }
