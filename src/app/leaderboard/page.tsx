@@ -1,24 +1,6 @@
 import { Button } from "@/components";
 import Link from "next/link";
-
-// Static leaderboard data - can be replaced with dynamic data later
-const leaderboardData = [
-	{ rank: 1, score: "1.2", code: 'eval(prompt("enter code"))', lang: "javascript" },
-	{ rank: 2, score: "1.8", code: "if (x == true) { return true; }", lang: "typescript" },
-	{ rank: 3, score: "2.1", code: "SELECT * FROM users WHERE 1=1", lang: "sql" },
-	{ rank: 4, score: "2.3", code: "var globalVar = 'bad practice'", lang: "javascript" },
-	{ rank: 5, score: "2.5", code: "catch (e) { }", lang: "javascript" },
-	{ rank: 6, score: "2.7", code: 'setTimeout(() => {...}, 0)', lang: "javascript" },
-	{ rank: 7, score: "2.9", code: "async function() { return }", lang: "python" },
-	{ rank: 8, score: "3.1", code: "document.write('<div>...</div>')", lang: "javascript" },
-	{ rank: 9, score: "3.3", code: "==== badly formatted ====", lang: "javascript" },
-	{ rank: 10, score: "3.5", code: "var x = 1; var x = 2;", lang: "javascript" },
-	{ rank: 11, score: "3.7", code: "function deepCopy(obj) { ... }", lang: "javascript" },
-	{ rank: 12, score: "3.9", code: "for(let i=0;i<array.length;i++)", lang: "javascript" },
-	{ rank: 13, score: "4.1", code: "const fn = () => { ... }", lang: "javascript" },
-	{ rank: 14, score: "4.3", code: "if (condition) doSomething()", lang: "python" },
-	{ rank: 15, score: "4.5", code: "try { ... } catch(...) { ... }", lang: "javascript" },
-];
+import { submissions } from "@/data/submissions";
 
 export default function LeaderboardPage() {
 	return (
@@ -39,7 +21,7 @@ export default function LeaderboardPage() {
 
 					{/* Stats */}
 					<div className="flex items-center justify-between text-xs text-gray-500 font-jetbrains-mono border-l-2 border-emerald-500 pl-4">
-						<span>total submissions: {leaderboardData.length}</span>
+						<span>total submissions: {submissions.length}</span>
 						<span>avg score: 3.1/10</span>
 					</div>
 				</div>
@@ -55,25 +37,24 @@ export default function LeaderboardPage() {
 							<div className="w-[100px]">lang</div>
 						</div>
 
-						{/* Table Rows */}
+						{/* Table Rows - Now clickable with links */}
 						<div>
-							{leaderboardData.map((item) => (
-								<div
-									key={item.rank}
-									className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12 cursor-pointer"
-								>
-									<div className="w-12 font-bold text-gray-500">{item.rank}</div>
-									<div className="w-[70px] font-bold text-red-400">{item.score}</div>
-									<div className="flex-1 text-gray-300 truncate">{item.code}</div>
-									<div className="w-[100px] text-gray-500">{item.lang}</div>
-								</div>
+							{submissions.map((item) => (
+								<Link key={item.id} href={`/results/${item.id}`}>
+									<div className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12 cursor-pointer">
+										<div className="w-12 font-bold text-gray-500">{item.rank}</div>
+										<div className="w-[70px] font-bold text-red-400">{item.score}</div>
+										<div className="flex-1 text-gray-300 truncate">{item.code}</div>
+										<div className="w-[100px] text-gray-500">{item.language}</div>
+									</div>
+								</Link>
 							))}
 						</div>
 					</div>
 
 					{/* Footer Stats */}
 					<div className="flex items-center justify-center py-6 text-xs text-gray-600 font-jetbrains-mono">
-						showing {leaderboardData.length} of {leaderboardData.length}
+						showing {submissions.length} of {submissions.length}
 					</div>
 				</div>
 
