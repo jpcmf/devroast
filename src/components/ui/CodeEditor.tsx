@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { EditorState } from "@codemirror/state";
 import { EditorView, lineNumbers } from "@codemirror/view";
 import { basicSetup } from "codemirror";
+import { indentUnit } from "@codemirror/language";
 import { detectLanguage, getLanguageExtension } from "@/utils/language";
 
 // Custom Vesper-inspired theme for CodeMirror
@@ -102,28 +103,39 @@ export function CodeEditor({
 	const viewRef = useRef<EditorView | null>(null);
 	const [detectedLanguage, setDetectedLanguage] = useState<string>(initialLanguage || "javascript");
 	const [copied, setCopied] = useState(false);
+	const callbacksRef = useRef({ onChange, onLanguageChange, detectedLanguage });
 
-	// Initialize editor
+	// Keep callbacks in sync without causing re-renders
+	useEffect(() => {
+		callbacksRef.current = { onChange, onLanguageChange, detectedLanguage };
+	}, [onChange, onLanguageChange, detectedLanguage]);
+
+	// Initialize editor once on component mount
+	// NOTE: We intentionally use empty deps here to run only once
+	// External value changes are handled by the sync effect below
+	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	useEffect(() => {
 		if (!editorRef.current) return;
+		if (viewRef.current) return; // Already initialized
 
 		const initialState = EditorState.create({
 			doc: value,
 			extensions: [
 				basicSetup,
 				lineNumbers(),
+				indentUnit.of("  "), // 2 spaces for tab
 				getLanguageExtension(detectedLanguage),
 				vesperTheme,
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged) {
 						const newValue = update.state.doc.toString();
-						onChange(newValue);
+						callbacksRef.current.onChange(newValue);
 
 						// Auto-detect language on paste/input
 						const newLanguage = detectLanguage(newValue);
-						if (newLanguage !== detectedLanguage) {
+						if (newLanguage !== callbacksRef.current.detectedLanguage) {
 							setDetectedLanguage(newLanguage);
-							onLanguageChange?.(newLanguage);
+							callbacksRef.current.onLanguageChange?.(newLanguage);
 						}
 					}
 				}),
@@ -139,8 +151,28 @@ export function CodeEditor({
 
 		return () => {
 			view.destroy();
+			viewRef.current = null;
 		};
-	}, [value, onChange, detectedLanguage, onLanguageChange]);
+	}, []); // Empty deps - initialize only once
+
+	// Sync external value changes to editor (when parent updates value)
+	useEffect(() => {
+		if (!viewRef.current) return;
+
+		const view = viewRef.current;
+		const currentValue = view.state.doc.toString();
+
+		// Only update if the value has actually changed and doesn't match
+		if (currentValue !== value) {
+			view.dispatch({
+				changes: {
+					from: 0,
+					to: currentValue.length,
+					insert: value,
+				},
+			});
+		}
+	}, [value]);
 
 	// Update language extension when manually changed
 	useEffect(() => {
@@ -154,18 +186,19 @@ export function CodeEditor({
 			extensions: [
 				basicSetup,
 				lineNumbers(),
+				indentUnit.of("  "), // 2 spaces for tab
 				getLanguageExtension(detectedLanguage),
 				vesperTheme,
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged) {
 						const newValue = update.state.doc.toString();
-						onChange(newValue);
+						callbacksRef.current.onChange(newValue);
 
 						// Auto-detect language on paste/input
 						const newLanguage = detectLanguage(newValue);
-						if (newLanguage !== detectedLanguage) {
+						if (newLanguage !== callbacksRef.current.detectedLanguage) {
 							setDetectedLanguage(newLanguage);
-							onLanguageChange?.(newLanguage);
+							callbacksRef.current.onLanguageChange?.(newLanguage);
 						}
 					}
 				}),
@@ -173,7 +206,7 @@ export function CodeEditor({
 		});
 
 		view.setState(newState);
-	}, [detectedLanguage, onChange, onLanguageChange]);
+	}, [detectedLanguage]);
 
 	const handleCopy = async () => {
 		try {
