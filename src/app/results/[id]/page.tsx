@@ -1,65 +1,27 @@
+import { getSubmissionById } from "@/data/submissions";
 import { Button } from "@/components";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-// Mock submission data - in production this would come from URL params or database
-const mockSubmission = {
-	code: `function deepCopy(obj) {
-  if (typeof obj !== 'object' || obj === null) {
-    return obj;
-  }
-  
-  const copy = Array.isArray(obj) ? [] : {};
-  
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      copy[key] = deepCopy(obj[key]);
-    }
-  }
-  
-  return copy;
-}`,
-	language: "javascript",
-	score: "7.2",
-	roastFeedback: [
-		{
-			severity: "critical",
-			line: 1,
-			message: "Function name is misleading - this is a shallow copy wrapper, not a deep copy",
-			suggestion: "Rename to shallowCopy() or implement proper deep cloning with structured clone",
-		},
-		{
-			severity: "critical",
-			line: 7,
-			message: "Using hasOwnProperty() without .call() can fail if object has hasOwnProperty override",
-			suggestion: "Use Object.prototype.hasOwnProperty.call(obj, key)",
-		},
-		{
-			severity: "warning",
-			line: 3,
-			message: "Recursive copy without circular reference detection will cause infinite loops",
-			suggestion: "Add a WeakMap to track visited objects and prevent cycles",
-		},
-		{
-			severity: "warning",
-			line: 1,
-			message: "Modern JavaScript has structuredClone() - why reinvent the wheel?",
-			suggestion: "Use const copy = structuredClone(obj) unless you need specific behavior",
-		},
-		{
-			severity: "good",
-			line: 6,
-			message: "Correctly checks for null (good catch!)",
-			suggestion: "Nice defensive programming here - null is object type in JS",
-		},
-	],
-};
+interface ResultsPageProps {
+	params: Promise<{
+		id: string;
+	}>;
+}
 
-export default function ResultsPage() {
+export default async function ResultsPage({ params }: ResultsPageProps) {
+	const { id } = await params;
+	const submission = getSubmissionById(id);
+
+	if (!submission) {
+		notFound();
+	}
+
 	const roastSummary = {
-		critical: mockSubmission.roastFeedback.filter((f) => f.severity === "critical").length,
-		warning: mockSubmission.roastFeedback.filter((f) => f.severity === "warning").length,
-		good: mockSubmission.roastFeedback.filter((f) => f.severity === "good").length,
+		critical: submission.roastFeedback.filter((f) => f.severity === "critical").length,
+		warning: submission.roastFeedback.filter((f) => f.severity === "warning").length,
+		good: submission.roastFeedback.filter((f) => f.severity === "good").length,
 	};
 
 	return (
@@ -86,11 +48,14 @@ export default function ResultsPage() {
 								shame score
 							</p>
 							<p className="text-5xl font-bold text-red-400 font-jetbrains-mono mt-2">
-								{mockSubmission.score}
+								{submission.score}
 								<span className="text-2xl text-gray-500">/10</span>
 							</p>
 						</div>
-						<div className="h-px w-px bg-gray-700" style={{ height: "80px" }} />
+						<div
+							className="bg-gray-700"
+							style={{ width: "1px", height: "80px" }}
+						/>
 						<div className="space-y-3 text-xs font-jetbrains-mono">
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-red-500" />
@@ -122,12 +87,12 @@ export default function ResultsPage() {
 							<span className="text-emerald-500">submitted code</span>
 						</h2>
 						<p className="text-xs text-gray-500 font-jetbrains-mono">
-							Language: {mockSubmission.language}
+							Language: {submission.language}
 						</p>
 					</div>
 
 					<div className="border border-gray-700 bg-gray-900 rounded-lg overflow-hidden">
-						<CodeBlock code={mockSubmission.code} language={mockSubmission.language} />
+						<CodeBlock code={submission.code} language={submission.language} />
 					</div>
 				</div>
 
@@ -139,7 +104,7 @@ export default function ResultsPage() {
 					</h2>
 
 					<div className="space-y-3">
-						{mockSubmission.roastFeedback.map((feedback) => (
+						{submission.roastFeedback.map((feedback) => (
 							<div
 								key={`${feedback.line}-${feedback.severity}`}
 								className="border border-gray-700 bg-gray-900 rounded-lg p-4"
@@ -188,14 +153,16 @@ export default function ResultsPage() {
 
 				{/* Actions */}
 				<div className="w-full max-w-3xl flex flex-col sm:flex-row items-center gap-4 justify-center">
-					<Link href="/">
+					<Link href="/leaderboard">
 						<Button variant="secondary" size="md">
-							{`$ back_to_editor`}
+							{`$ back_to_leaderboard`}
 						</Button>
 					</Link>
-					<Button variant="primary" size="md">
-						{`$ submit_again`}
-					</Button>
+					<Link href="/">
+						<Button variant="primary" size="md">
+							{`$ submit_your_code`}
+						</Button>
+					</Link>
 				</div>
 
 				{/* Bottom Padding */}
