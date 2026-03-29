@@ -152,21 +152,64 @@ pnpm check         # Run all Biome checks
 
 ## Git Workflow & Committing
 
-⚠️ **IMPORTANT**: When working on feature branches, **DO NOT create commits automatically**. Always ask for explicit confirmation before committing changes.
+⚠️ **IMPORTANT RULES**:
+1. **NEVER commit directly to `main`** - Always create a feature branch
+2. **NEVER commit implementation without explicit approval** - Always ask the user first
+3. **ONLY create specifications/docs** - Never auto-implement features
+4. **Always verify before committing** - Show changes and wait for confirmation
 
-### Guidelines:
-- **Ask first**: Before committing any changes, ask the user for permission
-- **Show changes**: Always display `git status` and `git diff` so the user can review
-- **Feature branches**: We typically work on branches like `feat/leaderboard-page`
-- **No force pushes**: Never use `git push --force` without explicit instruction
-- **Keep implementations**: If undoing commits, use `git reset --soft` to preserve code changes
+### Workflow:
+1. **Create a feature branch** for any work: `git checkout -b feat/feature-name` or `git checkout -b docs/documentation-name`
+2. **For Specifications**: Write the spec file, show the user, ask "Should I commit this spec?"
+3. **For Implementation**: After user approves spec, create the code on the feature branch
+4. **Before Committing**: 
+   - Run `pnpm build` to verify no errors
+   - Run `git status` to show what changed
+   - Show the user the changes with `git diff`
+5. **Ask Explicitly**: "Should I commit these changes?" - Wait for YES before committing
+6. **Push to Remote**: Only after local commit is confirmed - `git push origin branch-name`
+7. **Create Pull Request**: After push, create PR for user review and approval
 
-### Example Workflow:
-1. Implement feature/fix
-2. Run `pnpm build` to verify
-3. Show user the changes with `git status`
-4. **Ask**: "Should I commit these changes?"
-5. Only commit if user explicitly agrees
+### Branch Naming:
+- `feat/feature-name` - New features
+- `docs/documentation-name` - Documentation and specifications
+- `fix/bug-name` - Bug fixes
+- `refactor/change-name` - Refactoring
+
+### Important Notes:
+- **Feature branches stay local until PR is merged** to main
+- **Specs can be committed after user approval**, even if implementation is pending
+- **Implementation files are NEVER committed** unless the feature is fully ready and user explicitly approves
+- **Always use `git reset --soft HEAD~N`** to undo commits while preserving code changes
+- **Never force push** to main or feature branches without explicit instruction
+- If unsure about committing: ASK THE USER FIRST
+
+### Example Correct Workflow:
+
+**Creating a Spec:**
+```bash
+git checkout -b docs/trpc-implementation
+# Create specs/TRPC_IMPLEMENTATION.md
+git add specs/TRPC_IMPLEMENTATION.md
+# Show user the spec
+# User says: "This looks good, commit it"
+git commit -m "docs: add tRPC implementation specification"
+git push origin docs/trpc-implementation
+# Create PR for review
+```
+
+**Implementing a Feature:**
+```bash
+git checkout -b feat/trpc-backend
+# Create all implementation files (don't commit yet)
+pnpm build  # Verify it builds
+git status  # Show changes to user
+# User reviews and says: "Implementation looks good, commit it"
+git add -A
+git commit -m "feat: implement tRPC backend API"
+git push origin feat/trpc-backend
+# Create PR for final review and merge
+```
 
 ## Common Tasks
 

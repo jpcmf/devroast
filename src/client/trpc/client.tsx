@@ -1,0 +1,21 @@
+"use client";
+
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@/server/trpc/router";
+
+export const trpc = createTRPCClient<AppRouter>({
+	links: [
+		httpBatchLink({
+			url: getBaseUrl() + "/api/trpc",
+			headers: {
+				"x-trpc-source": "client",
+			},
+		}),
+	],
+});
+
+function getBaseUrl() {
+	if (typeof window !== "undefined") return "";
+	if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+	return `http://localhost:3000`;
+}
