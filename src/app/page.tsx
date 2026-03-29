@@ -1,13 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Toggle, CodeEditor } from "@/components";
 
 export default function Home() {
+	const router = useRouter();
 	const [code, setCode] = useState("");
 	const [roastMode, setRoastMode] = useState(false);
 
 	const isCodeEmpty = code.trim().length === 0;
+
+	const handleStartRoast = () => {
+		// In production, this would send code to API and redirect with submission ID
+		// For now, navigate to results page with mock data
+		router.push("/results");
+	};
 
 	return (
 		<div className="min-h-screen">
@@ -59,7 +67,12 @@ export default function Home() {
 							/>
 							<span className="text-xs text-gray-500 font-jetbrains-mono">{`// maximum sarcasm enabled`}</span>
 						</div>
-						<Button variant="primary" size="md" disabled={isCodeEmpty}>
+						<Button
+							variant="primary"
+							size="md"
+							disabled={isCodeEmpty}
+							onClick={handleStartRoast}
+						>
 							{`$ start the roast`}
 						</Button>
 					</div>
@@ -88,7 +101,7 @@ export default function Home() {
 							</p>
 						</div>
 						<a
-							href="/"
+							href="/leaderboard"
 							className="text-xs text-emerald-500 font-jetbrains-mono hover:text-emerald-400 transition-colors"
 						>
 							$ view_all &gt;&gt;
@@ -133,7 +146,7 @@ export default function Home() {
 					{/* View More Hint */}
 					<div className="flex items-center justify-center py-4 text-xs text-gray-600 font-jetbrains-mono">
 						showing top 3 of 2,847 ·{" "}
-						<a href="/" className="text-emerald-500 hover:text-emerald-400 ml-1">
+						<a href="/leaderboard" className="text-emerald-500 hover:text-emerald-400 ml-1">
 							view full leaderboard &gt;&gt;
 						</a>
 					</div>
