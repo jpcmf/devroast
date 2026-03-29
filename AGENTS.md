@@ -150,6 +150,24 @@ pnpm lint          # Lint code with Biome
 pnpm check         # Run all Biome checks
 ```
 
+## Git Workflow & Committing
+
+⚠️ **IMPORTANT**: When working on feature branches, **DO NOT create commits automatically**. Always ask for explicit confirmation before committing changes.
+
+### Guidelines:
+- **Ask first**: Before committing any changes, ask the user for permission
+- **Show changes**: Always display `git status` and `git diff` so the user can review
+- **Feature branches**: We typically work on branches like `feat/leaderboard-page`
+- **No force pushes**: Never use `git push --force` without explicit instruction
+- **Keep implementations**: If undoing commits, use `git reset --soft` to preserve code changes
+
+### Example Workflow:
+1. Implement feature/fix
+2. Run `pnpm build` to verify
+3. Show user the changes with `git status`
+4. **Ask**: "Should I commit these changes?"
+5. Only commit if user explicitly agrees
+
 ## Common Tasks
 
 ### Add New Component
