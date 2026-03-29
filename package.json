@@ -12,7 +12,7 @@
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
-		"db:studio": "drizzle-kit studio",
+		"db:studio": "set -a && source .env.local && set +a && drizzle-kit studio",
 		"seed": "tsx scripts/seed.ts"
 	},
 	"keywords": [],
@@ -55,6 +55,7 @@
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^10.4.0",
+		"@types/pg": "^8.20.0",
 		"drizzle-kit": "^0.31.10",
 		"faker-js": "^1.0.0",
 		"tsx": "^4.21.0"
