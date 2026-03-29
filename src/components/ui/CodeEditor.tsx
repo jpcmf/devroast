@@ -84,6 +84,83 @@ const vesperTheme = EditorView.theme({
 	},
 });
 
+// Gray theme when language detection doesn't match selection
+const grayTheme = EditorView.theme({
+	".cm-content": {
+		color: "#6b7280",
+		backgroundColor: "#18181b",
+		fontFamily: "var(--font-jetbrains-mono)",
+		fontSize: "14px",
+		lineHeight: "1.6",
+	},
+	".cm-gutters": {
+		backgroundColor: "#27272a",
+		color: "#71717a",
+		borderRight: "1px solid #3f3f46",
+	},
+	".cm-linenumber": {
+		color: "#71717a",
+	},
+	".cm-linenumber.cm-activeLineNumber": {
+		color: "#a1a1a8",
+		backgroundColor: "#3f3f46",
+	},
+	".cm-cursor": {
+		borderLeftColor: "#10b981",
+	},
+	".cm-selection": {
+		backgroundColor: "#374151 !important",
+	},
+	"&.cm-focused .cm-selection": {
+		backgroundColor: "#4b5563 !important",
+	},
+	".cm-activeLine": {
+		backgroundColor: "rgba(63, 63, 70, 0.3)",
+	},
+	".cm-keyword": {
+		color: "#6b7280",
+	},
+	".cm-atom": {
+		color: "#6b7280",
+	},
+	".cm-number": {
+		color: "#6b7280",
+	},
+	".cm-def": {
+		color: "#6b7280",
+	},
+	".cm-variable": {
+		color: "#6b7280",
+	},
+	".cm-variable-2": {
+		color: "#6b7280",
+	},
+	".cm-variable-3": {
+		color: "#6b7280",
+	},
+	".cm-property": {
+		color: "#6b7280",
+	},
+	".cm-operator": {
+		color: "#6b7280",
+	},
+	".cm-comment": {
+		color: "#6b7280",
+	},
+	".cm-string": {
+		color: "#6b7280",
+	},
+	".cm-meta": {
+		color: "#6b7280",
+	},
+	".cm-tag": {
+		color: "#6b7280",
+	},
+	".cm-attribute": {
+		color: "#6b7280",
+	},
+});
+
 // Language detection utility
 
 interface CodeEditorProps {
@@ -92,6 +169,11 @@ interface CodeEditorProps {
 	language?: string;
 	onLanguageChange?: (language: string) => void;
 }
+
+// Helper to select the appropriate theme based on language match
+const getThemeForLanguageMatch = (detected: string, selected: string) => {
+	return detected === selected ? vesperTheme : grayTheme;
+};
 
 export function CodeEditor({
 	value,
@@ -102,6 +184,7 @@ export function CodeEditor({
 	const editorRef = useRef<HTMLDivElement>(null);
 	const viewRef = useRef<EditorView | null>(null);
 	const [detectedLanguage, setDetectedLanguage] = useState<string>(initialLanguage || "javascript");
+	const [selectedLanguage, setSelectedLanguage] = useState<string>(initialLanguage || "javascript");
 	const [copied, setCopied] = useState(false);
 	const callbacksRef = useRef({ onChange, onLanguageChange, detectedLanguage });
 
@@ -125,7 +208,7 @@ export function CodeEditor({
 				lineNumbers(),
 				indentUnit.of("  "), // 2 spaces for tab
 				getLanguageExtension(detectedLanguage),
-				vesperTheme,
+				getThemeForLanguageMatch(detectedLanguage, selectedLanguage),
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged) {
 						const newValue = update.state.doc.toString();
@@ -135,6 +218,7 @@ export function CodeEditor({
 						const newLanguage = detectLanguage(newValue);
 						if (newLanguage !== callbacksRef.current.detectedLanguage) {
 							setDetectedLanguage(newLanguage);
+							setSelectedLanguage(newLanguage);
 							callbacksRef.current.onLanguageChange?.(newLanguage);
 						}
 					}
@@ -171,10 +255,18 @@ export function CodeEditor({
 					insert: value,
 				},
 			});
-		}
-	}, [value]);
 
-	// Update language extension when manually changed
+			// Auto-detect language when external value is pasted
+			const newLanguage = detectLanguage(value);
+			if (newLanguage !== detectedLanguage) {
+				setDetectedLanguage(newLanguage);
+				setSelectedLanguage(newLanguage);
+				onLanguageChange?.(newLanguage);
+			}
+		}
+	}, [value, detectedLanguage, onLanguageChange]);
+
+	// Update language extension when manually changed or detected language changes
 	useEffect(() => {
 		if (!viewRef.current) return;
 
@@ -188,7 +280,7 @@ export function CodeEditor({
 				lineNumbers(),
 				indentUnit.of("  "), // 2 spaces for tab
 				getLanguageExtension(detectedLanguage),
-				vesperTheme,
+				getThemeForLanguageMatch(detectedLanguage, selectedLanguage),
 				EditorView.updateListener.of((update) => {
 					if (update.docChanged) {
 						const newValue = update.state.doc.toString();
@@ -198,6 +290,7 @@ export function CodeEditor({
 						const newLanguage = detectLanguage(newValue);
 						if (newLanguage !== callbacksRef.current.detectedLanguage) {
 							setDetectedLanguage(newLanguage);
+							setSelectedLanguage(newLanguage);
 							callbacksRef.current.onLanguageChange?.(newLanguage);
 						}
 					}
@@ -206,7 +299,7 @@ export function CodeEditor({
 		});
 
 		view.setState(newState);
-	}, [detectedLanguage]);
+	}, [detectedLanguage, selectedLanguage]);
 
 	const handleCopy = async () => {
 		try {
@@ -225,10 +318,10 @@ export function CodeEditor({
 			{/* Header with language selector and copy button */}
 			<div className="flex items-center justify-between bg-gray-900 rounded-lg px-4 py-3 border border-gray-700">
 				<select
-					value={detectedLanguage}
+					value={selectedLanguage}
 					onChange={(e) => {
 						const newLang = e.target.value;
-						setDetectedLanguage(newLang);
+						setSelectedLanguage(newLang);
 						onLanguageChange?.(newLang);
 					}}
 					className="bg-gray-800 text-gray-200 text-sm px-3 py-2 rounded border border-gray-600 outline-none cursor-pointer hover:border-gray-500 focus:border-emerald-500"
