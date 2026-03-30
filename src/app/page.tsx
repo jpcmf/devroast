@@ -120,19 +120,19 @@ export default function Home() {
 							<div className="w-[100px]">lang</div>
 						</div>
 
-					{/* Table Rows - Pixel Perfect: padding 16 vertical + 20 horizontal */}
-					<div>
-						{getLeaderboardPreview(3).map((item) => (
-							<Link key={item.id} href={`/results/${item.id}`}>
-								<div className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12 cursor-pointer">
-									<div className="w-12 font-bold text-gray-500">{item.rank}</div>
-									<div className="w-[70px] font-bold text-red-400">{item.score}</div>
-									<div className="flex-1 text-gray-300 truncate">{item.code}</div>
-									<div className="w-[100px] text-gray-500">{item.language}</div>
-								</div>
-							</Link>
-						))}
-					</div>
+						{/* Table Rows - Pixel Perfect: padding 16 vertical + 20 horizontal */}
+						<div>
+							{getLeaderboardPreview(3).map((item) => (
+								<Link key={item.id} href={`/results/${item.id}`}>
+									<div className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12 cursor-pointer">
+										<div className="w-12 font-bold text-gray-500">{item.rank}</div>
+										<div className="w-[70px] font-bold text-red-400">{item.score}</div>
+										<div className="flex-1 text-gray-300 truncate">{item.code}</div>
+										<div className="w-[100px] text-gray-500">{item.language}</div>
+									</div>
+								</Link>
+							))}
+						</div>
 					</div>
 
 					{/* View More Hint */}
