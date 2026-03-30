@@ -136,8 +136,33 @@ export { Component, componentVariants, type ComponentProps }
 
 ### SSR Considerations
 - CodeBlock is a server component (async, no `'use client'`)
-- All other components are client components by default
+- Use server components with Suspense boundaries for data fetching
+- Client components with `'use client'` for interactive features (forms, animations)
 - Use `useId()` hook for dynamic ID generation (not `Math.random()`)
+
+### Data Fetching Pattern
+- **Server Components**: Use `serverTrpc` from `@/server/trpc/server.tsx` to call procedures directly
+- **Client Components**: Use tRPC client hooks for real-time data and interactivity
+- **Suspense**: Wrap async components with `<Suspense>` and provide `Skeleton` loading states
+- **Example**:
+```typescript
+// Server component with Suspense
+import { Suspense } from 'react'
+import { serverTrpc } from '@/server/trpc/server'
+
+async function MetricsSection() {
+  const data = await serverTrpc.metrics.getTotal()
+  return <MetricsContent data={data} />
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<MetricsSkeleton />}>
+      <MetricsSection />
+    </Suspense>
+  )
+}
+```
 
 ## Scripts
 
@@ -187,14 +212,22 @@ pnpm check         # Run all Biome checks
 3. Navbar is inherited from root layout
 4. Background color is global
 
+## What's Implemented
+
+The following features are now complete with real data integration:
+- ✅ **Metrics Display** - Home page metrics showing total roasts and average score with animations
+- ✅ **Leaderboard Pages** - Full leaderboard page with real database data
+- ✅ **Home Leaderboard Preview** - Top 3 worst submissions preview on home page
+- ✅ **Results Page** - Dynamic results page that fetches from database with fallback to mock data
+- ✅ **tRPC Integration** - Complete server-client RPC layer with type safety
+
 ## What NOT to Build Now
 
 The following components are designed but deferred until feature building:
 - **Diff Line** - For code comparison views
-- **Table Row** - For leaderboard and data tables
 - **Score Ring** - For score visualization
-- **Navbar** - Already in root layout
+- **Advanced Filtering/Sorting** - For leaderboard pagination and filtering
 
-Build these only when their respective pages are implemented.
+Build these only when their respective features are needed.
 
 
