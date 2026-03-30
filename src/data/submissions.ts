@@ -348,3 +348,13 @@ export function getSubmissionById(id: string): Submission | undefined {
 export function getLeaderboardPreview(count: number = 3): Submission[] {
 	return submissions.slice(0, count);
 }
+
+export function getTotalCodesRoasted(): number {
+	return submissions.length;
+}
+
+export function getAverageScore(): number {
+	if (submissions.length === 0) return 0;
+	const total = submissions.reduce((sum, sub) => sum + parseFloat(sub.score), 0);
+	return Math.round((total / submissions.length) * 10) / 10;
+}
