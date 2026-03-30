@@ -1,17 +1,17 @@
-import Link from 'next/link'
-import { LeaderboardCodeBlock } from '@/components/ui'
+import Link from "next/link";
+import { LeaderboardCodeBlock } from "@/components/ui";
 
 interface LeaderboardItem {
-	id: string
-	rank: number
-	score: string
-	code: string
-	language: string
+	id: string;
+	rank: number;
+	score: string;
+	code: string;
+	language: string;
 }
 
 interface LeaderboardTableProps {
-	items: LeaderboardItem[]
-	totalCount: number
+	items: LeaderboardItem[];
+	totalCount: number;
 }
 
 /**
@@ -32,31 +32,39 @@ export async function LeaderboardTable({ items, totalCount }: LeaderboardTablePr
 
 				{/* Table Rows */}
 				<div>
-					{await Promise.all(
-						items.map(async (item) => (
-							<Link key={item.id} href={`/results/${item.id}`}>
-								<div className="flex items-start gap-3 border-b border-gray-700 px-5 py-3 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors cursor-pointer">
-									{/* Rank */}
-									<div className="w-12 font-bold text-gray-500 flex-shrink-0 pt-1">{item.rank}</div>
+					{
+						await Promise.all(
+							items.map(async (item) => (
+								<Link key={item.id} href={`/results/${item.id}`}>
+									<div className="flex items-start gap-3 border-b border-gray-700 px-5 py-3 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors cursor-pointer">
+										{/* Rank */}
+										<div className="w-12 font-bold text-gray-500 flex-shrink-0 pt-1">
+											{item.rank}
+										</div>
 
-									{/* Score */}
-									<div className="w-[70px] font-bold text-red-400 flex-shrink-0 pt-1">{item.score}</div>
+										{/* Score */}
+										<div className="w-[70px] font-bold text-red-400 flex-shrink-0 pt-1">
+											{item.score}
+										</div>
 
-									{/* Code with syntax highlighting and scroll */}
-									<div className="flex-1 min-w-0">
-										<LeaderboardCodeBlock
-											code={item.code}
-											language={item.language}
-											maxHeight="max-h-[120px]"
-										/>
+										{/* Code with syntax highlighting and scroll */}
+										<div className="flex-1 min-w-0">
+											<LeaderboardCodeBlock
+												code={item.code}
+												language={item.language}
+												maxHeight="max-h-[120px]"
+											/>
+										</div>
+
+										{/* Language */}
+										<div className="w-[100px] text-gray-500 flex-shrink-0 pt-1">
+											{item.language}
+										</div>
 									</div>
-
-									{/* Language */}
-									<div className="w-[100px] text-gray-500 flex-shrink-0 pt-1">{item.language}</div>
-								</div>
-							</Link>
-						))
-					)}
+								</Link>
+							)),
+						)
+					}
 				</div>
 			</div>
 
@@ -65,5 +73,5 @@ export async function LeaderboardTable({ items, totalCount }: LeaderboardTablePr
 				showing {items.length} of {totalCount}
 			</div>
 		</>
-	)
+	);
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 /**
  * Skeleton loading state for leaderboard table
@@ -38,5 +38,5 @@ export function LeaderboardSkeleton() {
 				))}
 			</div>
 		</div>
-	)
+	);
 }

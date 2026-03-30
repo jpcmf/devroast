@@ -1,5 +1,5 @@
-import { serverTrpc } from '@/server/trpc/server'
-import { AnimatedMetrics } from './HomeMetrics'
+import { serverTrpc } from "@/server/trpc/server";
+import { AnimatedMetrics } from "./HomeMetrics";
 
 /**
  * Server component that fetches metrics and renders with animations
@@ -10,8 +10,8 @@ export async function HomeMetricsSection() {
 	const [totalRoasts, { average }] = await Promise.all([
 		serverTrpc.metrics.getTotalRoasts(),
 		serverTrpc.metrics.getAverageScore(),
-	])
+	]);
 
 	// Pass data directly to client component for animated display
-	return <AnimatedMetrics totalRoasts={totalRoasts} averageScore={average} />
+	return <AnimatedMetrics totalRoasts={totalRoasts} averageScore={average} />;
 }

@@ -26,17 +26,18 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 		notFound();
 	}
 
-	const roastSummary = 'roastFeedback' in submission
-		? {
-			critical: submission.roastFeedback.filter((f) => f.severity === "critical").length,
-			warning: submission.roastFeedback.filter((f) => f.severity === "warning").length,
-			good: submission.roastFeedback.filter((f) => f.severity === "good").length,
-		}
-		: {
-			critical: 0,
-			warning: 0,
-			good: 0,
-		};
+	const roastSummary =
+		"roastFeedback" in submission
+			? {
+					critical: submission.roastFeedback.filter((f) => f.severity === "critical").length,
+					warning: submission.roastFeedback.filter((f) => f.severity === "warning").length,
+					good: submission.roastFeedback.filter((f) => f.severity === "good").length,
+				}
+			: {
+					critical: 0,
+					warning: 0,
+					good: 0,
+				};
 
 	return (
 		<div className="min-h-screen">
@@ -66,28 +67,19 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 								<span className="text-2xl text-gray-500">/10</span>
 							</p>
 						</div>
-						<div
-							className="bg-gray-700"
-							style={{ width: "1px", height: "80px" }}
-						/>
+						<div className="bg-gray-700" style={{ width: "1px", height: "80px" }} />
 						<div className="space-y-3 text-xs font-jetbrains-mono">
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-red-500" />
-								<span className="text-gray-400">
-									{roastSummary.critical} critical issues
-								</span>
+								<span className="text-gray-400">{roastSummary.critical} critical issues</span>
 							</div>
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-amber-500" />
-								<span className="text-gray-400">
-									{roastSummary.warning} warnings
-								</span>
+								<span className="text-gray-400">{roastSummary.warning} warnings</span>
 							</div>
 							<div className="flex items-center gap-2">
 								<div className="w-3 h-3 rounded-full bg-emerald-500" />
-								<span className="text-gray-400">
-									{roastSummary.good} good practices
-								</span>
+								<span className="text-gray-400">{roastSummary.good} good practices</span>
 							</div>
 						</div>
 					</div>
@@ -111,7 +103,7 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
 				</div>
 
 				{/* Feedback Section */}
-				{'roastFeedback' in submission && (
+				{"roastFeedback" in submission && (
 					<div className="w-full max-w-3xl space-y-4">
 						<h2 className="text-lg font-bold text-gray-100 font-jetbrains-mono">
 							{`// `}

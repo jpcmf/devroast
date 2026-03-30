@@ -5,7 +5,6 @@ import { HomeLeaderboardSection } from "@/components/HomeLeaderboardSection";
 
 // Make this a server component
 export default function Home() {
-
 	return (
 		<div className="min-h-screen">
 			{/* Main Content */}
@@ -20,20 +19,20 @@ export default function Home() {
 					</p>
 				</div>
 
-			{/* Code Input Section */}
-			<CodeEditorSection />
+				{/* Code Input Section */}
+				<CodeEditorSection />
 
-			{/* Metrics Section with Suspense */}
-			<HomeMetricsSection />
+				{/* Metrics Section with Suspense */}
+				<HomeMetricsSection />
 
-			{/* Spacer */}
-			<div className="h-12" />
+				{/* Spacer */}
+				<div className="h-12" />
 
-			{/* Leaderboard Preview Section with Suspense */}
-			<HomeLeaderboardSection />
+				{/* Leaderboard Preview Section with Suspense */}
+				<HomeLeaderboardSection />
 
-			{/* Bottom Padding */}
-			<div className="h-12" />
+				{/* Bottom Padding */}
+				<div className="h-12" />
 			</main>
 		</div>
 	);

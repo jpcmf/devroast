@@ -29,7 +29,8 @@ export const submissions: Submission[] = [
 				severity: "critical",
 				line: 1,
 				message: "Using eval() is the security vulnerability hall of fame",
-				suggestion: "Never use eval(). Use JSON.parse() for JSON or Function constructor with strict controls",
+				suggestion:
+					"Never use eval(). Use JSON.parse() for JSON or Function constructor with strict controls",
 			},
 			{
 				severity: "critical",
@@ -145,14 +146,15 @@ export const submissions: Submission[] = [
 		id: "6",
 		rank: 6,
 		score: "2.7",
-		code: 'setTimeout(() => {...}, 0)',
+		code: "setTimeout(() => {...}, 0)",
 		language: "javascript",
 		roastFeedback: [
 			{
 				severity: "warning",
 				line: 1,
 				message: "setTimeout(..., 0) doesn't execute immediately despite appearing that way",
-				suggestion: "If you need immediate execution, just call the function. Use proper async/await patterns",
+				suggestion:
+					"If you need immediate execution, just call the function. Use proper async/await patterns",
 			},
 			{
 				severity: "warning",
@@ -251,7 +253,8 @@ export const submissions: Submission[] = [
 				severity: "critical",
 				line: 1,
 				message: "Function name is misleading - this is a shallow copy wrapper, not a deep copy",
-				suggestion: "Rename to shallowCopy() or implement proper deep cloning with structured clone",
+				suggestion:
+					"Rename to shallowCopy() or implement proper deep cloning with structured clone",
 			},
 			{
 				severity: "warning",
