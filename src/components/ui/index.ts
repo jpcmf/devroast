@@ -6,6 +6,7 @@ export {
 	type ToggleProps,
 } from "./Toggle";
 export { CodeBlock, type CodeBlockProps } from "./CodeBlock";
+export { LeaderboardCodeBlock, type LeaderboardCodeBlockProps } from "./LeaderboardCodeBlock";
 export { CodeEditor, type CodeEditorProps } from "./CodeEditor";
 export {
 	Card,
