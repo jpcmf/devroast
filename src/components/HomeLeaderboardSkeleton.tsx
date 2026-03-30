@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 /**
  * Skeleton loading state for home page leaderboard preview
@@ -46,5 +46,5 @@ export function HomeLeaderboardSkeleton() {
 				<div className="h-4 w-48 bg-gray-700 rounded animate-pulse" />
 			</div>
 		</>
-	)
+	);
 }

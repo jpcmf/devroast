@@ -7,8 +7,7 @@ import { z } from "zod";
 export const metricsRouter = router({
 	getTotalRoasts: publicProcedure.query(async () => {
 		const result = await db.select({ total: count() }).from(submissions);
-		console.log('result', result[0]);
-		
+		console.log("result", result[0]);
 
 		return result[0]?.total ?? 0;
 	}),

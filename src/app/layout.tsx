@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Link from 'next/link';
+import Link from "next/link";
 
 const jetBrainsMono = JetBrains_Mono({
 	subsets: ["latin"],
@@ -29,10 +29,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 					{/* Nav Links */}
 					<div className="flex items-center gap-6">
-						<Link href="/leaderboard" className="text-sm text-gray-400 font-jetbrains-mono hover:text-gray-100 transition-colors">
+						<Link
+							href="/leaderboard"
+							className="text-sm text-gray-400 font-jetbrains-mono hover:text-gray-100 transition-colors"
+						>
 							leaderboard
 						</Link>
-
 					</div>
 				</nav>
 

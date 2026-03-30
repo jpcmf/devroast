@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button, Toggle, CodeEditor } from '@/components'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Toggle, CodeEditor } from "@/components";
 
 export function CodeEditorSection() {
-	const router = useRouter()
-	const [code, setCode] = useState('')
-	const [roastMode, setRoastMode] = useState(false)
+	const router = useRouter();
+	const [code, setCode] = useState("");
+	const [roastMode, setRoastMode] = useState(false);
 
-	const isCodeEmpty = code.trim().length === 0
+	const isCodeEmpty = code.trim().length === 0;
 
 	const handleStartRoast = () => {
 		// In production, this would send code to API and redirect with submission ID
 		// For now, navigate to results page with first submission as demo
-		router.push('/results/1')
-	}
+		router.push("/results/1");
+	};
 
 	return (
 		<div className="w-full max-w-3xl space-y-4">
@@ -38,7 +38,7 @@ export function CodeEditorSection() {
 					<CodeEditor
 						value={code}
 						onChange={setCode}
-						onLanguageChange={(lang) => console.log('Language:', lang)}
+						onLanguageChange={(lang) => console.log("Language:", lang)}
 					/>
 				</div>
 			</div>
@@ -53,15 +53,10 @@ export function CodeEditorSection() {
 					/>
 					<span className="text-xs text-gray-500 font-jetbrains-mono">{`// maximum sarcasm enabled`}</span>
 				</div>
-				<Button
-					variant="primary"
-					size="md"
-					disabled={isCodeEmpty}
-					onClick={handleStartRoast}
-				>
+				<Button variant="primary" size="md" disabled={isCodeEmpty} onClick={handleStartRoast}>
 					{`$ start the roast`}
 				</Button>
 			</div>
 		</div>
-	)
+	);
 }

@@ -10,7 +10,7 @@ export default async function LeaderboardPage() {
 	const [totalRoasts, { average }] = await Promise.all([
 		serverTrpc.metrics.getTotalRoasts(),
 		serverTrpc.metrics.getAverageScore(),
-	])
+	]);
 
 	return (
 		<div className="min-h-screen">
@@ -62,4 +62,3 @@ export default async function LeaderboardPage() {
 		</div>
 	);
 }
-

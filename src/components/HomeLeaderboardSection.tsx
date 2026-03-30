@@ -1,16 +1,16 @@
-import Link from 'next/link'
-import { LeaderboardCodeBlock } from '@/components/ui'
-import { serverTrpc } from '@/server/trpc/server'
-import { Suspense } from 'react'
-import { HomeLeaderboardSkeleton } from './HomeLeaderboardSkeleton'
+import Link from "next/link";
+import { LeaderboardCodeBlock } from "@/components/ui";
+import { serverTrpc } from "@/server/trpc/server";
+import { Suspense } from "react";
+import { HomeLeaderboardSkeleton } from "./HomeLeaderboardSkeleton";
 
 /**
  * Server component that fetches leaderboard preview (top 3)
  */
 async function HomeLeaderboardContent() {
-	const allItems = await serverTrpc.metrics.getLeaderboard()
-	const totalCount = allItems.length
-	const items = allItems.slice(0, 3) // Top 3 for preview
+	const allItems = await serverTrpc.metrics.getLeaderboard();
+	const totalCount = allItems.length;
+	const items = allItems.slice(0, 3); // Top 3 for preview
 
 	return (
 		<>
@@ -26,31 +26,39 @@ async function HomeLeaderboardContent() {
 
 				{/* Table Rows */}
 				<div>
-					{await Promise.all(
-						items.map(async (item) => (
-							<Link key={item.id} href={`/results/${item.id}`}>
-								<div className="flex items-start gap-3 border-b border-gray-700 px-5 py-3 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors cursor-pointer">
-									{/* Rank */}
-									<div className="w-12 font-bold text-gray-500 flex-shrink-0 pt-1">{item.rank}</div>
+					{
+						await Promise.all(
+							items.map(async (item) => (
+								<Link key={item.id} href={`/results/${item.id}`}>
+									<div className="flex items-start gap-3 border-b border-gray-700 px-5 py-3 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors cursor-pointer">
+										{/* Rank */}
+										<div className="w-12 font-bold text-gray-500 flex-shrink-0 pt-1">
+											{item.rank}
+										</div>
 
-									{/* Score */}
-									<div className="w-[70px] font-bold text-red-400 flex-shrink-0 pt-1">{item.score}</div>
+										{/* Score */}
+										<div className="w-[70px] font-bold text-red-400 flex-shrink-0 pt-1">
+											{item.score}
+										</div>
 
-									{/* Code with syntax highlighting and scroll - smaller for preview */}
-									<div className="flex-1 min-w-0">
-										<LeaderboardCodeBlock
-											code={item.code}
-											language={item.language}
-											maxHeight="max-h-[80px]"
-										/>
+										{/* Code with syntax highlighting and scroll - smaller for preview */}
+										<div className="flex-1 min-w-0">
+											<LeaderboardCodeBlock
+												code={item.code}
+												language={item.language}
+												maxHeight="max-h-[80px]"
+											/>
+										</div>
+
+										{/* Language */}
+										<div className="w-[100px] text-gray-500 flex-shrink-0 pt-1">
+											{item.language}
+										</div>
 									</div>
-
-									{/* Language */}
-									<div className="w-[100px] text-gray-500 flex-shrink-0 pt-1">{item.language}</div>
-								</div>
-							</Link>
-						))
-					)}
+								</Link>
+							)),
+						)
+					}
 				</div>
 			</div>
 
@@ -62,7 +70,7 @@ async function HomeLeaderboardContent() {
 				</a>
 			</div>
 		</>
-	)
+	);
 }
 
 /**
@@ -94,5 +102,5 @@ export function HomeLeaderboardSection() {
 				<HomeLeaderboardContent />
 			</Suspense>
 		</div>
-	)
+	);
 }
