@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import type { HTMLAttributes } from "react";
 import { codeToHtml } from "shiki";
 
 interface LeaderboardCodeBlockProps extends HTMLAttributes<HTMLDivElement> {
@@ -33,7 +33,7 @@ async function LeaderboardCodeBlock({
 
 	return (
 		<div
-			className={`${maxHeight} overflow-y-auto bg-gray-800 rounded border border-gray-700 px-3 py-2 text-xs font-jetbrains-mono ${className || ""}`}
+			className={`${maxHeight} overflow-y-auto bg-gray-800 rounded border border-gray-700 px-0 py-0 text-xs font-jetbrains-mono ${className || ""}`}
 			{...props}
 		>
 			<div
