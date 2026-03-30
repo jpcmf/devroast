@@ -1,8 +1,17 @@
 import { Button } from "@/components";
 import Link from "next/link";
-import { submissions } from "@/data/submissions";
+import { Suspense } from "react";
+import { LeaderboardContent } from "@/components/LeaderboardContent";
+import { LeaderboardSkeleton } from "@/components/LeaderboardSkeleton";
+import { serverTrpc } from "@/server/trpc/server";
 
-export default function LeaderboardPage() {
+export default async function LeaderboardPage() {
+	// Fetch stats on the server
+	const [totalRoasts, { average }] = await Promise.all([
+		serverTrpc.metrics.getTotalRoasts(),
+		serverTrpc.metrics.getAverageScore(),
+	])
+
 	return (
 		<div className="min-h-screen">
 			{/* Main Content */}
@@ -21,41 +30,16 @@ export default function LeaderboardPage() {
 
 					{/* Stats */}
 					<div className="flex items-center justify-between text-xs text-gray-500 font-jetbrains-mono border-l-2 border-emerald-500 pl-4">
-						<span>total submissions: {submissions.length}</span>
-						<span>avg score: 3.1/10</span>
+						<span>total submissions: {totalRoasts}</span>
+						<span>avg score: {average}/10</span>
 					</div>
 				</div>
 
-				{/* Leaderboard Table */}
+				{/* Leaderboard Table with Suspense */}
 				<div className="w-full max-w-3xl">
-					<div className="border border-gray-700 bg-gray-900 overflow-hidden rounded-lg">
-						{/* Table Header */}
-						<div className="flex items-center border-b border-gray-700 bg-gray-800 px-5 text-xs font-bold text-gray-400 font-jetbrains-mono h-10">
-							<div className="w-12">#</div>
-							<div className="w-[70px]">score</div>
-							<div className="flex-1">code</div>
-							<div className="w-[100px]">lang</div>
-						</div>
-
-						{/* Table Rows - Now clickable with links */}
-						<div>
-							{submissions.map((item) => (
-								<Link key={item.id} href={`/results/${item.id}`}>
-									<div className="flex items-center border-b border-gray-700 px-5 text-xs text-gray-400 font-jetbrains-mono hover:bg-gray-800 transition-colors h-12 cursor-pointer">
-										<div className="w-12 font-bold text-gray-500">{item.rank}</div>
-										<div className="w-[70px] font-bold text-red-400">{item.score}</div>
-										<div className="flex-1 text-gray-300 truncate">{item.code}</div>
-										<div className="w-[100px] text-gray-500">{item.language}</div>
-									</div>
-								</Link>
-							))}
-						</div>
-					</div>
-
-					{/* Footer Stats */}
-					<div className="flex items-center justify-center py-6 text-xs text-gray-600 font-jetbrains-mono">
-						showing {submissions.length} of {submissions.length}
-					</div>
+					<Suspense fallback={<LeaderboardSkeleton />}>
+						<LeaderboardContent />
+					</Suspense>
 				</div>
 
 				{/* CTA Section */}
@@ -78,3 +62,4 @@ export default function LeaderboardPage() {
 		</div>
 	);
 }
+
