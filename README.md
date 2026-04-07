@@ -14,6 +14,7 @@ DevRoast is a web application where developers submit code snippets and receive 
 - [Key Features](#key-features)
 - [How It Works](#how-it-works)
 - [Getting Started](#getting-started)
+- [Production Deployment](#production-deployment)
 - [Development Setup](#development-setup)
 - [Project Structure](#project-structure)
 - [Tech Stack](#tech-stack)
@@ -62,6 +63,46 @@ Tired of polite code reviews? DevRoast changes the game by offering a judgment-f
 ### For Developers
 
 See the [Development Setup](#development-setup) section below.
+
+---
+
+## Production Deployment
+
+### Live Application
+
+**🚀 Production URL:** https://devroast-one.vercel.app
+
+The application is fully deployed and running on Vercel with Supabase as the production database.
+
+### Deployment Stack
+
+- **Hosting**: Vercel (iad1 region, Washington D.C.)
+- **Database**: Supabase PostgreSQL with Connection Pooler
+- **Infrastructure**: Uses Connection Pooler for serverless compatibility
+
+### Environment Variables (Production)
+
+Set in **Vercel Dashboard** > **Settings** > **Environment Variables**:
+
+```bash
+DATABASE_URL=[Supabase Connection Pooler string from dashboard]
+NEXT_PUBLIC_SUPABASE_URL=[Supabase Project URL from Settings > API]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[From Supabase Settings > API]
+GEMINI_API_KEY=[your-gemini-api-key]
+```
+
+Get connection strings from:
+- **Supabase Dashboard** > **Settings** > **Database** > **Connection String**
+- Switch to "Connection Pooler" mode for production
+
+### Deployment Documentation
+
+For detailed deployment information, see `specs/DEPLOYMENT.md`:
+- Complete setup instructions
+- Environment configuration
+- Troubleshooting guide
+- Database migration steps
+- Network configuration
 
 ---
 
@@ -890,6 +931,7 @@ Consider adding Redis for:
 ### Project Documentation
 - `AGENTS.md` - Development guide for agents and developers
 - `DATABASE.md` - Database setup and configuration
+- `specs/DEPLOYMENT.md` - **Production deployment guide** ✅
 - `specs/CODE_SUBMISSION_IMPLEMENTATION.md` - Implementation specifications
 - `TESTING.md` - Testing guide and examples
 
