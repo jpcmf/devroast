@@ -185,6 +185,27 @@ const result = await getSubmissionById(submission.id)
 - `getAverageSeverityScore()` - Calculate average severity
 - `getTotalRoastCount()` - Get total number of roasts
 
+#### Metrics (Pagination)
+- `getLeaderboard({ page, pageSize })` - Get paginated leaderboard with pagination metadata
+  - **Parameters:**
+    - `page` (number): Page number (1-indexed, required)
+    - `pageSize` (number): Items per page (1-100, required)
+  - **Returns:** Object with `items` array and `pagination` metadata
+  - **Example:**
+    ```typescript
+    const result = await serverTrpc.metrics.getLeaderboard({
+      page: 1,
+      pageSize: 10
+    })
+    // Returns:
+    // {
+    //   items: [{ id, rank, score, code, language, createdAt }, ...],
+    //   pagination: { page: 1, pageSize: 10, totalCount: 15, totalPages: 2 }
+    // }
+    ```
+- `getTotalRoasts()` - Get total number of submissions
+- `getAverageScore()` - Get average severity score across all submissions
+
 ## Available NPM Scripts
 
 ```bash
@@ -291,6 +312,36 @@ echo $DATABASE_URL
 - Clear browser cache and try again
 
 ## Performance Considerations
+
+## Performance Considerations
+
+### Pagination
+
+The leaderboard implements server-side pagination for efficient data loading:
+
+**How Pagination Works:**
+- Queries use `LIMIT` and `OFFSET` to fetch only required records
+- Formula: `offset = (page - 1) * pageSize`
+- For 15 total submissions with pageSize 10:
+  - Page 1: offset 0, limit 10 → records 1-10
+  - Page 2: offset 10, limit 10 → records 11-15
+
+**Client-Side Implementation:**
+- `LeaderboardContent.tsx` is a client component managing pagination state
+- Page changes trigger a fetch to `/api/trpc/metrics.getLeaderboard` with new parameters
+- Results update in-place with smooth scroll to top
+- Pagination controls show: current page, total pages, previous/next buttons, and page numbers with ellipsis
+
+**Example Usage:**
+```typescript
+// Fetch page 2 with 10 items per page
+const response = await fetch(
+  '/api/trpc/metrics.getLeaderboard?input=' + 
+  JSON.stringify({ page: 2, pageSize: 10 })
+)
+const { result } = await response.json()
+// result.data = { items: [...], pagination: {...} }
+```
 
 ### Indexes
 Currently, the schema includes basic indexes. Consider adding more for large datasets:

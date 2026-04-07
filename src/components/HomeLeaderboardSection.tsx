@@ -8,9 +8,12 @@ import { HomeLeaderboardSkeleton } from "./HomeLeaderboardSkeleton";
  * Server component that fetches leaderboard preview (top 3)
  */
 async function HomeLeaderboardContent() {
-	const allItems = await serverTrpc.metrics.getLeaderboard();
-	const totalCount = allItems.length;
-	const items = allItems.slice(0, 3); // Top 3 for preview
+	const leaderboardData = await serverTrpc.metrics.getLeaderboard({
+		page: 1,
+		pageSize: 3,
+	});
+	const totalCount = leaderboardData.pagination.totalCount;
+	const items = leaderboardData.items;
 
 	return (
 		<>

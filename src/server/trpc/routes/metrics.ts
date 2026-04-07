@@ -23,29 +23,62 @@ export const metricsRouter = router({
 		};
 	}),
 
-	getLeaderboard: publicProcedure.query(async () => {
-		// Fetch all roasted submissions with their data, ordered by severity rating (worst first)
-		const results = await db
-			.select({
-				id: submissions.id,
-				code: submissions.code,
-				language: submissions.language,
-				severityRating: roasts.severityRating,
-				rankPosition: roasts.rankPosition,
-			})
-			.from(submissions)
-			.innerJoin(roasts, sql`${submissions.id} = ${roasts.submissionId}`)
-			.orderBy(desc(roasts.severityRating));
+	getLeaderboard: publicProcedure
+		.input(
+			z.object({
+				page: z.number().int().positive().default(1),
+				pageSize: z.number().int().positive().max(100).default(10),
+			}),
+		)
+		.query(async ({ input: { page = 1, pageSize = 10 } }) => {
+			const offset = (page - 1) * pageSize;
 
-		// Add rank based on position in results
-		return results.map((item, index) => ({
-			id: item.id,
-			rank: index + 1,
-			score: String(item.severityRating),
-			code: item.code,
-			language: item.language,
-		}));
-	}),
+			// Fetch total count
+			const totalResult = await db
+				.select({ total: count() })
+				.from(submissions)
+				.innerJoin(roasts, sql`${submissions.id} = ${roasts.submissionId}`);
+
+			const totalCount = totalResult[0]?.total ?? 0;
+
+			// Fetch paginated roasted submissions with their data, ordered by severity rating (worst first)
+			const results = await db
+				.select({
+					id: submissions.id,
+					code: submissions.code,
+					language: submissions.language,
+					severityRating: roasts.severityRating,
+					rankPosition: roasts.rankPosition,
+					createdAt: submissions.createdAt,
+				})
+				.from(submissions)
+				.innerJoin(roasts, sql`${submissions.id} = ${roasts.submissionId}`)
+				.orderBy(desc(roasts.severityRating))
+				.limit(pageSize)
+				.offset(offset);
+
+			// Add rank based on position in results
+			const items = results.map((item, index) => ({
+				id: item.id,
+				rank: offset + index + 1,
+				score: String(item.severityRating),
+				code: item.code,
+				language: item.language,
+				createdAt: item.createdAt,
+			}));
+
+			const totalPages = Math.ceil(totalCount / pageSize);
+
+			return {
+				items,
+				pagination: {
+					page,
+					pageSize,
+					totalCount,
+					totalPages,
+				},
+			};
+		}),
 
 	getSubmissionById: publicProcedure
 		.input(z.string().uuid())

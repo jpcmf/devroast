@@ -5,6 +5,16 @@ import { LeaderboardContent } from "@/components/LeaderboardContent";
 import { LeaderboardSkeleton } from "@/components/LeaderboardSkeleton";
 import { serverTrpc } from "@/server/trpc/server";
 
+async function LeaderboardInitial() {
+	// Fetch initial page (page 1, 10 items per page)
+	const leaderboardData = await serverTrpc.metrics.getLeaderboard({
+		page: 1,
+		pageSize: 10,
+	});
+
+	return <LeaderboardContent initialData={leaderboardData} />;
+}
+
 export default async function LeaderboardPage() {
 	// Fetch stats on the server
 	const [totalRoasts, { average }] = await Promise.all([
@@ -35,10 +45,10 @@ export default async function LeaderboardPage() {
 					</div>
 				</div>
 
-				{/* Leaderboard Table with Suspense */}
+				{/* Leaderboard Table with Suspense and Pagination */}
 				<div className="w-full max-w-3xl">
 					<Suspense fallback={<LeaderboardSkeleton />}>
-						<LeaderboardContent />
+						<LeaderboardInitial />
 					</Suspense>
 				</div>
 

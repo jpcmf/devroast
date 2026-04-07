@@ -34,10 +34,11 @@ Tired of polite code reviews? DevRoast changes the game by offering a judgment-f
 - **AI-Powered Feedback** - Get instant feedback using Google Gemini API
 - **Roast Mode** - Toggle between standard feedback and full roast mode for maximum entertainment
 - **Real-time Updates** - Get feedback as soon as it's generated (no page refresh needed)
-- **Shame Leaderboard** - See which code made it to the internet's hall of shame
+- **Shame Leaderboard** - See which code made it to the internet's hall of shame with pagination
 - **Syntax Highlighting** - Code is displayed with beautiful syntax highlighting via Shiki
 - **Dark Terminal Aesthetic** - A sleek, terminal-inspired design inspired by developer culture
 - **Rate Limiting** - Spam protection with per-IP and global cooldown limits
+- **Paginated Leaderboard** - Browse submissions with 10 items per page and smart navigation controls
 
 ## How It Works
 
@@ -164,6 +165,9 @@ devroast/
 │   │   │   ├── CodeBlock.tsx         # Code display component
 │   │   │   └── index.ts              # Barrel export
 │   │   ├── ScoreCardSkeleton.tsx     # Skeleton loader for score card
+│   │   ├── LeaderboardContent.tsx    # Paginated leaderboard client component
+│   │   ├── LeaderboardTable.tsx      # Leaderboard table display
+│   │   ├── LeaderboardSkeleton.tsx   # Skeleton loader for leaderboard
 │   │   ├── SubmissionForm.tsx        # Code submission form
 │   │   ├── NavBar.tsx                # Navigation bar
 │   │   └── index.ts                  # Main component export
@@ -318,9 +322,44 @@ Poll for AI-generated feedback.
 
 ### Leaderboard
 
-**Endpoint:** `GET /api/trpc/roasts.getTopRoasts`
+**Endpoint:** `GET /api/trpc/metrics.getLeaderboard`
 
-Get the "worst" code submissions.
+Get paginated leaderboard submissions with filtering and sorting support.
+
+**Request:**
+```typescript
+{
+  page: number          // Page number (1-indexed, default: 1)
+  pageSize: number      // Items per page (1-100, default: 10)
+}
+```
+
+**Response:**
+```typescript
+{
+  items: [
+    {
+      id: string
+      rank: number
+      score: string
+      code: string
+      language: string
+      createdAt: Date
+    },
+    ...
+  ],
+  pagination: {
+    page: number
+    pageSize: number
+    totalCount: number
+    totalPages: number
+  }
+}
+```
+
+**Legacy Endpoint:** `GET /api/trpc/roasts.getTopRoasts`
+
+Get the top "worst" code submissions (non-paginated, for home preview).
 
 **Response:**
 ```typescript
