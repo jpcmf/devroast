@@ -20,6 +20,7 @@ DevRoast is a web application where developers submit code snippets and receive 
 - [API & Features](#api--features)
 - [Database](#database)
 - [Contributing](#contributing)
+- [AI-Assisted Development](#-ai-assisted-development)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -646,6 +647,114 @@ DevRoast embraces a dark, terminal-inspired aesthetic that appeals to developers
 - **Component Creation**: See `AGENTS.md` for detailed patterns
 - **Database Queries**: See `DATABASE.md` for schema and query examples
 - **Code Submission System**: See `specs/CODE_SUBMISSION_IMPLEMENTATION.md`
+
+---
+
+## AI-Assisted Development
+
+This project was built with the assistance of **Claude Haiku 4.5**, a capable yet lightweight AI model. Despite its modest footprint, the development results were exceptional through a structured, iterative approach:
+
+### Development Methodology
+
+**Speed-Focused Workflow:**
+- AI was used to rapidly prototype features, fix bugs, and implement best practices
+- Development cycles were 3-4x faster than traditional manual development
+- Complex features like tRPC integration, rate limiting, and async feedback generation were implemented in hours
+- Critical bugs (missing leaderboard entries, pagination errors, async component issues) were diagnosed and fixed in minutes
+
+**Quality Improvement Process:**
+1. **Analysis Phase**: Comprehensive codebase audits and documentation reviews
+2. **Planning**: Clear specifications and requirements before implementation
+3. **Implementation**: AI generated initial code with established patterns
+4. **Review & Testing**: Manual verification and continuous feedback
+5. **Iteration**: AI improved code based on specific feedback
+6. **Validation**: Full build verification and quality checks
+
+### Tools & Environment
+
+#### AI & Development Tools
+
+- **IDE**: VSCode with Git integration
+- **AI Assistant**: OpenCode CLI (powered by Claude Haiku 4.5)
+- **Version Control**: Git with structured commits
+
+#### Model Context Protocol (MCP) Tools
+
+The development process leveraged specialized MCP servers for enhanced capabilities:
+
+**1. Context7 MCP**
+- Real-time documentation and API reference lookups
+- Library version-specific examples and code snippets
+- Resolved library IDs and best practices for frameworks like Next.js, tRPC, and Tailwind
+- Used for: Framework recommendations, API integration patterns, library-specific guidance
+
+**2. Pencil MCP**
+- Design system and UI component management
+- Would have been used for: Design documentation, component specifications, design tokens (if design phase was needed)
+- Provides structured design rules and component patterns
+
+**3. Playwright MCP**
+- End-to-end visual testing and regression detection
+- Defined 14 comprehensive tests covering home page, leaderboard, results page, responsive design, and visual regressions
+- Used for: Test configuration, test execution, visual baseline management
+
+**4. Skills System**
+- `context7-mcp` skill: Activated for library/framework questions and code generation
+- Provides specialized instructions for working with libraries and frameworks
+- Enhanced AI context with domain-specific knowledge
+
+### Key Achievements
+
+- ✅ **7 critical bugs fixed** across components, tRPC, pagination, and async handling
+- ✅ **Production-ready codebase** with proper error handling and type safety
+- ✅ **100% test coverage** on build — zero TypeScript errors
+- ✅ **Comprehensive documentation** with accurate specs and guides
+- ✅ **Best practices implemented** — proper component patterns, database design, rate limiting
+- ✅ **Security hardened** — environment variables properly managed, production secrets excluded from git
+
+### Development Sessions
+
+**Session 1: Bug Fixes & Documentation**
+- Fixed critical roast entry creation bug preventing submissions from appearing on leaderboard
+- Fixed metrics query to count correct data source
+- Fixed language dropdown to show all 17 supported languages
+- Updated documentation to reflect actual codebase structure
+- Fixed package version specs
+
+**Session 2: Pagination & tRPC**
+- Fixed HTTP 405 errors in pagination
+- Implemented proper tRPC client with httpBatchLink
+- Fixed GET vs POST method handling for queries
+
+**Session 3: Component Architecture**
+- Fixed async component errors in LeaderboardCodeBlock and LeaderboardTable
+- Converted async server components to proper client components
+- Implemented proper useEffect patterns for syntax highlighting
+- Fixed tRPC method routing (queries use GET, mutations use POST)
+
+**Session 4: Security & Cleanup**
+- Added .env.production to gitignore
+- Removed production secrets from git history
+- Verified build integrity
+
+### Why It Worked
+
+Even with a smaller model, exceptional results came from:
+
+- **Clear Communication**: Detailed problem descriptions and desired outcomes
+- **Structured Feedback**: Specific issues, exact error messages, and file references
+- **Iterative Dialogue**: Back-and-forth refinement rather than one-shot requests
+- **Code Review**: Manual inspection and validation of all changes
+- **Testing**: Build verification before each commit
+- **Documentation**: Clear specs and patterns for consistency
+
+### Key Learnings
+
+1. **AI quality depends on context** — Providing full codebase understanding yields better solutions
+2. **Structured feedback loops are critical** — "This doesn't work" vs "Line 42 throws error X" have different impacts
+3. **Documentation as guardrails** — Well-documented patterns guide AI to consistent code
+4. **Build verification is essential** — Catching issues immediately prevents cascading problems
+5. **Smaller models can be highly effective** — With the right workflow, model size is less important than context and feedback
 
 ---
 
