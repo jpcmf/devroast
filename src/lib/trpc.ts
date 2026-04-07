@@ -9,12 +9,8 @@ export const trpc = createTRPCClient<AppRouter>({
 	links: [
 		httpBatchLink({
 			url: "/api/trpc",
-			// Optional: Add headers if needed
-			headers() {
-				return {
-					"content-type": "application/json",
-				};
-			},
+			// Force POST for all requests (avoids URL length issues with GET)
+			methodOverride: "POST",
 		}),
 	],
 });
