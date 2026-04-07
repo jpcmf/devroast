@@ -41,6 +41,7 @@ export const metricsRouter = router({
 			const totalCount = totalResult[0]?.total ?? 0;
 
 			// Fetch paginated roasted submissions with their data, ordered by severity rating (worst first)
+			// Secondary sort by createdAt (oldest first) for consistent ordering when scores are equal
 			const results = await db
 				.select({
 					id: submissions.id,
@@ -52,7 +53,7 @@ export const metricsRouter = router({
 				})
 				.from(submissions)
 				.innerJoin(roasts, sql`${submissions.id} = ${roasts.submissionId}`)
-				.orderBy(desc(roasts.severityRating))
+				.orderBy(desc(roasts.severityRating), submissions.createdAt)
 				.limit(pageSize)
 				.offset(offset);
 

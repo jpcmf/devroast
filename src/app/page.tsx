@@ -3,6 +3,9 @@ import { CodeEditorSection } from "@/components/CodeEditorSection";
 import { HomeMetricsSection } from "@/components/HomeMetricsSection";
 import { HomeLeaderboardSection } from "@/components/HomeLeaderboardSection";
 
+// Skip static prerendering - fetch data dynamically at request time
+export const dynamic = 'force-dynamic'
+
 // Make this a server component
 export default function Home() {
 	return (

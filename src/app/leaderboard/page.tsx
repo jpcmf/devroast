@@ -5,6 +5,9 @@ import { LeaderboardContent } from "@/components/LeaderboardContent";
 import { LeaderboardSkeleton } from "@/components/LeaderboardSkeleton";
 import { serverTrpc } from "@/server/trpc/server";
 
+// Skip static prerendering - fetch data dynamically at request time
+export const dynamic = 'force-dynamic'
+
 async function LeaderboardInitial() {
 	// Fetch initial page (page 1, 10 items per page)
 	const leaderboardData = await serverTrpc.metrics.getLeaderboard({
