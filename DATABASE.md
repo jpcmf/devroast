@@ -255,10 +255,10 @@ pnpm db:migrate
 ### Docker container won't start
 ```bash
 # Check logs
-pnpm docker:logs
+docker-compose logs -f postgres
 
 # Reset everything (WARNING: deletes data)
-pnpm docker:reset
+docker-compose down -v && docker-compose up -d
 ```
 
 ### Cannot connect to database
@@ -338,5 +338,5 @@ The database foundation is complete with full schema, migrations, and query func
 For issues or questions:
 1. Check the troubleshooting section above
 2. Review Drizzle ORM documentation
-3. Check PostgreSQL error logs: `pnpm docker:logs`
+3. Check PostgreSQL error logs: `docker-compose logs -f postgres`
 4. Open an issue in the repository
