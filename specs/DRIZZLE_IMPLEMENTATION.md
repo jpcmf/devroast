@@ -620,7 +620,7 @@ const newSubmission = await db
 
 ```bash
 # Start database
-pnpm docker:up
+docker-compose up -d
 
 # Generate migrations
 pnpm db:generate
@@ -632,13 +632,13 @@ pnpm db:migrate
 pnpm db:studio
 
 # Reset database (development only)
-pnpm docker:reset
+docker-compose down -v && docker-compose up -d
 
 # View logs
-pnpm docker:logs
+docker-compose logs -f postgres
 
 # Stop database
-pnpm docker:down
+docker-compose down
 ```
 
 ---
