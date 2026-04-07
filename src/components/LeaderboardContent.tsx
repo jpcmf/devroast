@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useEffect } from "react";
-import { serverTrpc } from "@/server/trpc/server";
 import { LeaderboardTable } from "./LeaderboardTable";
 import { Button } from "./ui";
+import { trpc } from "@/lib/trpc";
 
 interface LeaderboardData {
 	items: Array<{
@@ -39,13 +39,21 @@ export function LeaderboardContent({ initialData }: { initialData: LeaderboardDa
 
 		setIsLoading(true);
 		try {
-			const response = await fetch(
-				`/api/trpc/metrics.getLeaderboard?input=${JSON.stringify({ page: newPage, pageSize })}`,
-			);
-			const result = await response.json();
+			const result = await trpc.metrics.getLeaderboard.query({ 
+				page: newPage, 
+				pageSize 
+			});
 
-			if (result.result?.data) {
-				setData(result.result.data);
+			if (result) {
+				// Convert createdAt strings to Date objects
+				const convertedResult = {
+					...result,
+					items: result.items.map(item => ({
+						...item,
+						createdAt: new Date(item.createdAt)
+					}))
+				};
+				setData(convertedResult);
 				setCurrentPage(newPage);
 				// Scroll to top
 				window.scrollTo({ top: 0, behavior: "smooth" });
