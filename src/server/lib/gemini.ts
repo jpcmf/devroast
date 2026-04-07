@@ -77,6 +77,7 @@ SEVERITY: [number 1-10]`
 
 /**
  * Generates AI feedback for submitted code using Google Gemini
+ * Implements timeout handling and automatic retry logic
  */
 export async function generateFeedback({
   code,
@@ -91,93 +92,132 @@ export async function generateFeedback({
     ? buildRoastModePrompt(code, language)
     : buildStandardPrompt(code, language)
 
-  try {
-    console.log('[Gemini] Calling Gemini API for feedback generation...')
-    
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': GEMINI_API_KEY,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
+  // Retry configuration
+  const MAX_RETRIES = 3
+  const INITIAL_DELAY = 1000 // 1 second
+  const API_TIMEOUT = 30000 // 30 seconds per request
+
+  let lastError: Error | null = null
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[Gemini] Calling Gemini API (attempt ${attempt}/${MAX_RETRIES})...`)
+      
+      // Create abort controller with timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT)
+
+      try {
+        const response = await fetch(GEMINI_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            contents: [
               {
-                text: prompt,
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
               },
             ],
-          },
-        ],
-      }),
-    })
+          }),
+          signal: controller.signal,
+        })
+        
+        clearTimeout(timeoutId)
 
-    console.log('[Gemini] Response status:', response.status)
+        console.log('[Gemini] Response status:', response.status)
 
-    if (!response.ok) {
-      const error = await response.json()
-      console.error('[Gemini] API error response:', error)
-      throw new Error(
-        `Gemini API error: ${response.status} - ${error.error?.message || 'Unknown error'}`
-      )
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('[Gemini] API error response:', error)
+          throw new Error(
+            `Gemini API error: ${response.status} - ${error.error?.message || 'Unknown error'}`
+          )
+        }
+
+        const data = (await response.json()) as GeminiResponse
+
+        if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+          console.error('[Gemini] Invalid response structure:', data)
+          throw new Error('Invalid response structure from Gemini API')
+        }
+
+        const fullText = data.candidates[0].content.parts[0].text
+        console.log('[Gemini] Feedback generated successfully, length:', fullText.length)
+        
+        let feedback = fullText
+        let severity: number | undefined
+        let issuesFound = 0
+        let recommendationsCount = 0
+
+        // Extract severity from both standard and roast mode responses
+        const severityMatch = fullText.match(/SEVERITY:\s*(\d+)/)
+        if (severityMatch) {
+          severity = Math.min(10, Math.max(1, parseInt(severityMatch[1], 10)))
+          feedback = fullText.replace(/\nSEVERITY:\s*\d+\s*$/m, '').trim()
+          console.log('[Gemini] Extracted severity:', severity)
+        }
+
+        // Count issues (lines starting with "issue:", "bug:", "problem:", etc.)
+        const issueMatches = feedback.match(/(?:issue|bug|problem|error|concern|mistake|flaw|bad)[\s:]+/gi)
+        issuesFound = issueMatches ? issueMatches.length : 0
+
+        // Count recommendations (lines with "should", "recommend", "consider", "try", "use", "replace", etc.)
+        const recommendMatches = feedback.match(/(?:should|recommend|consider|try|use|replace|instead|suggest)[\s:]+/gi)
+        recommendationsCount = recommendMatches ? recommendMatches.length : 0
+
+        // If no issues found but severity is high, set a minimum
+        if (issuesFound === 0 && severity && severity >= 7) {
+          issuesFound = Math.max(1, Math.ceil(severity / 3))
+        }
+
+        // If no recommendations but feedback is longer, infer some
+        if (recommendationsCount === 0 && feedback.length > 100) {
+          recommendationsCount = Math.max(1, Math.floor(feedback.length / 200))
+        }
+
+        console.log('[Gemini] Feedback analysis complete:', { issuesFound, recommendationsCount, severity })
+
+        return {
+          feedback,
+          severity,
+          issuesFound,
+          recommendationsCount,
+        }
+      } catch (fetchError) {
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          lastError = new Error(`Gemini API request timeout (${API_TIMEOUT}ms)`)
+          console.error(`[Gemini] ${lastError.message}, attempt ${attempt}/${MAX_RETRIES}`)
+        } else {
+          lastError = fetchError instanceof Error ? fetchError : new Error(String(fetchError))
+          console.error(`[Gemini] Request failed on attempt ${attempt}/${MAX_RETRIES}:`, lastError.message)
+        }
+
+        // If this is not the last attempt, wait and retry
+        if (attempt < MAX_RETRIES) {
+          const delayMs = INITIAL_DELAY * Math.pow(2, attempt - 1)
+          console.log(`[Gemini] Retrying in ${delayMs}ms...`)
+          await new Promise(resolve => setTimeout(resolve, delayMs))
+        }
+      }
+    } catch (error) {
+      // Outer catch for any sync errors
+      lastError = error instanceof Error ? error : new Error(String(error))
+      console.error(`[Gemini] Unexpected error on attempt ${attempt}/${MAX_RETRIES}:`, lastError.message)
+      
+      if (attempt < MAX_RETRIES) {
+        const delayMs = INITIAL_DELAY * Math.pow(2, attempt - 1)
+        console.log(`[Gemini] Retrying in ${delayMs}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delayMs))
+      }
     }
-
-    const data = (await response.json()) as GeminiResponse
-
-    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-      console.error('[Gemini] Invalid response structure:', data)
-      throw new Error('Invalid response structure from Gemini API')
-    }
-
-    const fullText = data.candidates[0].content.parts[0].text
-    console.log('[Gemini] Feedback generated successfully, length:', fullText.length)
-    
-    let feedback = fullText
-    let severity: number | undefined
-    let issuesFound = 0
-    let recommendationsCount = 0
-
-    // Extract severity from both standard and roast mode responses
-    const severityMatch = fullText.match(/SEVERITY:\s*(\d+)/)
-    if (severityMatch) {
-      severity = Math.min(10, Math.max(1, parseInt(severityMatch[1], 10)))
-      feedback = fullText.replace(/\nSEVERITY:\s*\d+\s*$/m, '').trim()
-      console.log('[Gemini] Extracted severity:', severity)
-    }
-
-    // Count issues (lines starting with "issue:", "bug:", "problem:", etc.)
-    const issueMatches = feedback.match(/(?:issue|bug|problem|error|concern|mistake|flaw|bad)[\s:]+/gi)
-    issuesFound = issueMatches ? issueMatches.length : 0
-
-    // Count recommendations (lines with "should", "recommend", "consider", "try", "use", "replace", etc.)
-    const recommendMatches = feedback.match(/(?:should|recommend|consider|try|use|replace|instead|suggest)[\s:]+/gi)
-    recommendationsCount = recommendMatches ? recommendMatches.length : 0
-
-    // If no issues found but severity is high, set a minimum
-    if (issuesFound === 0 && severity && severity >= 7) {
-      issuesFound = Math.max(1, Math.ceil(severity / 3))
-    }
-
-    // If no recommendations but feedback is longer, infer some
-    if (recommendationsCount === 0 && feedback.length > 100) {
-      recommendationsCount = Math.max(1, Math.floor(feedback.length / 200))
-    }
-
-    console.log('[Gemini] Feedback analysis complete:', { issuesFound, recommendationsCount, severity })
-
-    return {
-      feedback,
-      severity,
-      issuesFound,
-      recommendationsCount,
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('[Gemini] Error generating feedback:', error.message)
-      throw new Error(`Failed to generate feedback: ${error.message}`)
-    }
-    console.error('[Gemini] Unknown error:', error)
-    throw error
   }
+
+  // All retries exhausted
+  throw new Error(`Failed to generate feedback after ${MAX_RETRIES} attempts: ${lastError?.message || 'Unknown error'}`)
 }

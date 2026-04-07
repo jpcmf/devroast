@@ -47,10 +47,17 @@ export default function ResultsContent({
 
 		console.log('[ResultsContent] Starting to poll for feedback, submission ID:', id)
 
+		let pollCount = 0
+		const MAX_POLLS = 90 // 90 polls × 2 seconds = 180 seconds (3 minutes) 
+		const POLL_INTERVAL = 2000 // 2 seconds
+
 		const pollInterval = setInterval(async () => {
+			pollCount++
 			try {
-				const response = await fetch(`/api/feedback/${id}`)
-				if (!response.ok) throw new Error('Failed to fetch feedback')
+				const response = await fetch(`/api/feedback/${id}`, {
+					signal: AbortSignal.timeout(5000), // 5-second fetch timeout
+				})
+				if (!response.ok) throw new Error(`HTTP ${response.status}: Failed to fetch feedback`)
 
 				const feedback = await response.json()
 				if (feedback) {
@@ -68,23 +75,27 @@ export default function ResultsContent({
 					// Calculate roast summary from feedback
 					setRoastSummary(extractSeverityBreakdown(feedback, newSeverityScore))
 				} else {
-					console.log('[ResultsContent] Feedback not yet available, polling again...')
+					console.log(`[ResultsContent] Feedback not yet available (poll ${pollCount}/${MAX_POLLS}), polling again...`)
 				}
 			} catch (err) {
-				console.error('[ResultsContent] Error polling for feedback:', err)
-				setError('Failed to load feedback')
+				// Log but don't stop polling on fetch errors - the backend might be temporarily unavailable
+				console.error(`[ResultsContent] Error polling for feedback (poll ${pollCount}):`, err)
+				// Only set error if it's a persistent network issue (not after just a few attempts)
+				if (pollCount > 10) {
+					setError(`Feedback generation in progress... (attempt ${pollCount})`)
+				}
 			}
-		}, 2000) // Poll every 2 seconds
+		}, POLL_INTERVAL)
 
-		// Stop polling after 120 seconds (increased from 60)
+		// Stop polling after max attempts
 		const timeout = setTimeout(() => {
 			clearInterval(pollInterval)
 			if (!aiFeedback) {
-				console.log('[ResultsContent] Polling timeout reached, no feedback received')
+				console.log(`[ResultsContent] Max polling attempts reached (${MAX_POLLS}), no feedback received`)
 				setIsLoading(false)
-				setError('Feedback generation took too long. Please try again.')
+				setError('Feedback generation took too long. The AI service may be temporarily unavailable. Please try again in a few moments.')
 			}
-		}, 120000)
+		}, MAX_POLLS * POLL_INTERVAL)
 
 		return () => {
 			clearInterval(pollInterval)
