@@ -6,20 +6,29 @@ This guide covers the database setup, configuration, and usage for the DevRoast 
 
 ## Quick Start
 
-### 1. Start the Database with Docker Compose
+### 1. Start the Development Server
+
+The easiest way to start developing locally is to use the included `docker-compose.yml`:
 
 ```bash
-# Make sure Docker is running, then start the containers
-pnpm docker:up
+# Ensure Docker is running, then start the containers
+docker-compose up -d
 
 # View logs to verify everything started correctly
-pnpm docker:logs
+docker-compose logs postgres
 ```
 
 This will:
 - Start a PostgreSQL 16 database container
-- Start a PgAdmin container for database management
-- Create persistent volumes for data
+- Create a persistent volume for data
+- Expose the database on port 5432
+
+**Connection Details**:
+- Host: `localhost`
+- Port: `5432`
+- Username: `devroast`
+- Password: `devroast_dev_password`
+- Database: `devroast_db`
 
 ### 2. Run Database Migrations
 
@@ -30,17 +39,20 @@ pnpm db:migrate
 
 ### 3. Access the Database
 
-**PostgreSQL Connection:**
-- Host: `localhost`
-- Port: `5432`
-- Username: `devroast`
-- Password: `devroast_dev_password`
-- Database: `devroast_db`
+**Using psql CLI**:
+```bash
+psql postgresql://devroast:devroast_dev_password@localhost:5432/devroast_db
+```
 
-**PgAdmin:**
-- URL: `http://localhost:5050`
-- Email: `admin@devroast.local`
-- Password: `admin_password`
+**Using Drizzle Studio (GUI)**:
+```bash
+pnpm db:studio
+```
+
+**Using Docker logs**:
+```bash
+docker-compose logs -f postgres
+```
 
 ## Project Structure
 
@@ -187,12 +199,7 @@ pnpm db:generate       # Generate migrations from schema
 pnpm db:migrate        # Run pending migrations
 pnpm db:studio         # Open Drizzle Studio GUI
 pnpm db:push           # Push schema changes directly (unsafe)
-
-# Docker
-pnpm docker:up         # Start Docker containers
-pnpm docker:down       # Stop Docker containers
-pnpm docker:logs       # View container logs
-pnpm docker:reset      # Stop and remove everything, restart fresh
+pnpm seed              # Seed database with sample data
 ```
 
 ## Environment Configuration
@@ -311,12 +318,13 @@ For large datasets, use pagination with `limit` and `offset` parameters on list 
 
 ## Next Steps
 
-1. Create API routes to handle submissions, feedback, and leaderboard queries
-2. Integrate with AI service for feedback generation
-3. Create pages to display submissions and leaderboard
-4. Add authentication if needed
-5. Set up automated backups
-6. Configure production database
+The database foundation is complete with full schema, migrations, and query functions. Future enhancements:
+
+1. **Performance optimization** - Add indexes on frequently queried columns
+2. **Connection pooling** - Fine-tune pool settings for production
+3. **Automated backups** - Configure daily backups for production
+4. **Read replicas** - For high-traffic scenarios
+5. **Data archival** - Move old submissions to cold storage
 
 ## Resources
 

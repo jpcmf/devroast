@@ -87,17 +87,15 @@ See the [Development Setup](#development-setup) section below.
 
 3. **Set up environment variables**
    ```bash
-   # Copy the template
-   cp .env.local.example .env.local
-   
-   # Add your Google Gemini API key
-   echo "GEMINI_API_KEY=your-api-key-here" >> .env.local
+   # Create .env.local file with required variables
+   echo "DATABASE_URL=postgresql://devroast:devroast_dev_password@localhost:5432/devroast_db" > .env.local
+   echo "GEMINI_API_KEY=your-gemini-api-key" >> .env.local
    ```
 
 4. **Start the database**
    ```bash
-   # Start PostgreSQL and PgAdmin with Docker
-   pnpm docker:up
+   # Start PostgreSQL with Docker Compose
+   docker-compose up -d
    
    # Run migrations
    pnpm db:migrate
@@ -398,14 +396,14 @@ Leaderboard and ranking data.
 ### Database Commands
 
 ```bash
-# Start PostgreSQL with Docker
-pnpm docker:up
+# Start PostgreSQL with Docker Compose
+docker-compose up -d
 
 # Stop Docker containers
-pnpm docker:down
+docker-compose down
 
 # View Docker logs
-pnpm docker:logs
+docker-compose logs -f postgres
 
 # Run pending migrations
 pnpm db:migrate
@@ -420,7 +418,7 @@ pnpm db:studio
 pnpm seed
 
 # Reset everything (WARNING: deletes data)
-pnpm docker:reset
+docker-compose down -v && docker-compose up -d
 ```
 
 ### Database Access
@@ -773,6 +771,6 @@ See LICENSE file for details.
 
 ---
 
-**Last Updated:** April 7, 2025
+**Last Updated:** April 7, 2026
 
 Made with ❤️ for developers who appreciate honest feedback.
