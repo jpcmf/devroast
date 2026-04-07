@@ -531,10 +531,10 @@ pnpm seed             # Seed database
 ### Docker
 
 ```bash
-pnpm docker:up        # Start containers
-pnpm docker:down      # Stop containers
-pnpm docker:logs      # View logs
-pnpm docker:reset     # Full reset
+docker-compose up -d              # Start containers
+docker-compose down               # Stop containers
+docker-compose logs -f postgres   # View logs
+docker-compose down -v            # Remove volumes (reset data)
 ```
 
 ---
@@ -625,10 +625,10 @@ pnpm build
 **Docker container won't start:**
 ```bash
 # Check logs
-pnpm docker:logs
+docker-compose logs -f postgres
 
 # Reset (WARNING: deletes data)
-pnpm docker:reset
+docker-compose down -v && docker-compose up -d
 ```
 
 **Cannot connect to database:**
