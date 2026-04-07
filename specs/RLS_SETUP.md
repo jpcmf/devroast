@@ -63,7 +63,7 @@ All three should show `rowsecurity = true`
 **If you see "Permission denied" errors:**
 - Make sure you're in the Supabase SQL Editor, not a third-party tool
 - Verify you're logged in with the correct Supabase account
-- Check that the project is the right one ([REDACTED-PROJECT-ID])
+- Check that the project is the right one (verify in Supabase Dashboard > Settings)
 
 **If RLS doesn't enable:**
 - Try running the `ALTER TABLE` statements one at a time

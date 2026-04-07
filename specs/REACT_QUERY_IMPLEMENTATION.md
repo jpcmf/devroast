@@ -78,7 +78,7 @@ All core functionality (code submission, AI feedback, results display, leaderboa
 **Location**: `src/server/lib/rate-limiter.ts`
 
 **What Works**:
-- Per-IP limit: 10 submissions per hour
+- Per-IP limit: 5 submissions per hour
 - Global cooldown: 30 seconds between all submissions
 - Extraction of client IP from proxy headers
 - Clear error messages to users
