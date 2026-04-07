@@ -2,19 +2,58 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button, Toggle, CodeEditor } from "@/components";
 
 export function CodeEditorSection() {
 	const router = useRouter();
 	const [code, setCode] = useState("");
-	const [roastMode, setRoastMode] = useState(false);
+	const [language, setLanguage] = useState("javascript");
+	const [roastMode, setRoastMode] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const isCodeEmpty = code.trim().length === 0;
 
-	const handleStartRoast = () => {
-		// In production, this would send code to API and redirect with submission ID
-		// For now, navigate to results page with first submission as demo
-		router.push("/results/1");
+	const handleStartRoast = async () => {
+		if (isCodeEmpty) {
+			toast.error("Please paste some code first");
+			return;
+		}
+
+		setIsLoading(true);
+
+		try {
+			const response = await fetch("/api/trpc/submissions.create", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					code,
+					language: language as "javascript" | "typescript" | "python" | "rust" | "golang" | "java" | "csharp" | "php" | "ruby" | "kotlin" | "sql" | "html" | "css" | "json" | "yaml" | "bash" | "other",
+					roastMode,
+				}),
+			});
+
+			if (!response.ok) {
+				const error = await response.json();
+				throw new Error(error.error?.message || "Failed to submit code");
+			}
+
+			const data = await response.json();
+
+			if (!data.result?.data?.submissionId) {
+				throw new Error("Invalid response from server");
+			}
+
+			toast.success("Code submitted! Preparing your roast...");
+			// Redirect to results page
+			router.push(`/results/${data.result.data.submissionId}`);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : "Failed to submit code. Please try again.";
+			toast.error(errorMessage);
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -38,7 +77,8 @@ export function CodeEditorSection() {
 					<CodeEditor
 						value={code}
 						onChange={setCode}
-						onLanguageChange={(lang) => console.log("Language:", lang)}
+						language={language}
+						onLanguageChange={setLanguage}
 					/>
 				</div>
 			</div>
@@ -50,11 +90,17 @@ export function CodeEditorSection() {
 						checked={roastMode}
 						onChange={(e) => setRoastMode(e.target.checked)}
 						label="roast mode"
+						disabled={isLoading}
 					/>
 					<span className="text-xs text-gray-500 font-jetbrains-mono">{`// maximum sarcasm enabled`}</span>
 				</div>
-				<Button variant="primary" size="md" disabled={isCodeEmpty} onClick={handleStartRoast}>
-					{`$ start the roast`}
+				<Button
+					variant="primary"
+					size="md"
+					disabled={isCodeEmpty || isLoading}
+					onClick={handleStartRoast}
+				>
+					{isLoading ? "$ submitting..." : `$ start the roast`}
 				</Button>
 			</div>
 		</div>

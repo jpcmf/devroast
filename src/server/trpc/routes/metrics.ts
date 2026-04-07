@@ -4,6 +4,8 @@ import { roasts, submissions } from "@/db/schema";
 import { publicProcedure, router } from "../init";
 import { z } from "zod";
 
+// Note: roasts table is still imported for other queries (getAverageScore, getLeaderboard)
+
 export const metricsRouter = router({
 	getTotalRoasts: publicProcedure.query(async () => {
 		const result = await db.select({ total: count() }).from(submissions);
@@ -48,16 +50,17 @@ export const metricsRouter = router({
 	getSubmissionById: publicProcedure
 		.input(z.string().uuid())
 		.query(async ({ input: submissionId }) => {
-			// Fetch submission with roast data
+			// Fetch submission from database
 			const submissionData = await db
 				.select({
 					id: submissions.id,
 					code: submissions.code,
 					language: submissions.language,
-					severityRating: roasts.severityRating,
+					severityScore: submissions.severityScore,
+					roastMode: submissions.roastMode,
+					viewCount: submissions.viewCount,
 				})
 				.from(submissions)
-				.leftJoin(roasts, sql`${submissions.id} = ${roasts.submissionId}`)
 				.where(eq(submissions.id, submissionId));
 
 			if (!submissionData || submissionData.length === 0) {
@@ -70,7 +73,9 @@ export const metricsRouter = router({
 				id: submission.id,
 				code: submission.code,
 				language: submission.language,
-				score: String(submission.severityRating ?? 0),
+				severityScore: submission.severityScore ?? 0,
+				roastMode: submission.roastMode,
+				viewCount: submission.viewCount,
 			};
 		}),
 });

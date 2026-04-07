@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import Link from "next/link";
 
@@ -40,6 +41,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 				{/* Page Content */}
 				{children}
+
+				{/* Sonner Toast Notifications */}
+				<Toaster
+					theme="dark"
+					position="top-right"
+					richColors
+					closeButton
+				/>
 			</body>
 		</html>
 	);
