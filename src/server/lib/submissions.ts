@@ -5,6 +5,7 @@
 
 import { createSubmission, updateSubmissionSeverity } from '@/db/queries/submissions'
 import { createFeedback } from '@/db/queries/feedback'
+import { createRoast } from '@/db/queries/roasts'
 import { type NewSubmission, type NewFeedback } from '@/db/schema'
 import { generateFeedback } from './gemini'
 
@@ -69,13 +70,26 @@ export async function generateAndSaveFeedback(
     await createFeedback(newFeedback)
     console.log(`[generateAndSaveFeedback] Feedback saved to database for submission: ${submissionId}`)
 
-    // Update submission with severity score if available (roast mode)
+    // Update submission with severity score if available
+    let normalizedSeverity = 0
     if (severity !== undefined) {
-      // Map severity from 1-10 scale to 1-100 scale for consistency
-      const normalizedSeverity = Math.round((severity / 10) * 100)
+      // Map severity from 1-10 scale to 0-100 scale for consistency
+      normalizedSeverity = Math.round((severity / 10) * 100)
       await updateSubmissionSeverity(submissionId, normalizedSeverity)
       console.log(`[generateAndSaveFeedback] Updated severity score for submission ${submissionId}: ${normalizedSeverity}`)
     }
+
+    // Create roasts entry for leaderboard
+    // Critical: This was missing and prevented new submissions from appearing on the leaderboard
+    const roastEntry = await createRoast({
+      submissionId,
+      rankPosition: 1, // Will be updated by ranking algorithm if implemented
+      severityRating: normalizedSeverity,
+      criticalIssuesCount: issuesFound || 0,
+      badges: [],
+      lastRankedAt: new Date(),
+    })
+    console.log(`[generateAndSaveFeedback] Created roasts entry for submission ${submissionId}: ${roastEntry.id}`)
   } catch (error) {
     // Log error but don't throw - submission already created
     console.error(

@@ -311,7 +311,7 @@ export function CodeEditor({
 		}
 	};
 
-	const languages = ["javascript", "python", "css", "html", "json", "rust", "go"];
+	const languages = ["javascript", "typescript", "python", "rust", "golang", "java", "csharp", "php", "ruby", "kotlin", "sql", "html", "css", "json", "yaml", "bash", "other"];
 
 	return (
 		<div className="flex flex-col gap-3">

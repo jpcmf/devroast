@@ -147,12 +147,11 @@ devroast/
 │   ├── app/                          # Next.js app directory
 │   │   ├── api/                      # API routes
 │   │   │   ├── feedback/[id]/        # Feedback polling endpoint
-│   │   │   ├── trpc/[trpc]/          # tRPC API handler
-│   │   │   └── health/               # Health check endpoint
-│   │   ├── leaderboard/              # Leaderboard pages
+│   │   │   └── trpc/[trpc]/          # tRPC API handler
+│   │   ├── leaderboard/              # Leaderboard page
 │   │   ├── results/[id]/             # Submission results page
 │   │   ├── examples/                 # Example components page
-│   │   ├── layout.tsx                # Root layout
+│   │   ├── layout.tsx                # Root layout with navbar
 │   │   ├── page.tsx                  # Home page
 │   │   └── globals.css               # Global styles
 │   │
@@ -163,48 +162,60 @@ devroast/
 │   │   │   ├── Toggle.tsx            # Toggle component
 │   │   │   ├── BadgeStatus.tsx       # Status badge component
 │   │   │   ├── CodeBlock.tsx         # Code display component
+│   │   │   ├── CodeEditor.tsx        # Code editor component with language selector
+│   │   │   ├── LeaderboardCodeBlock.tsx  # Leaderboard code display
 │   │   │   └── index.ts              # Barrel export
 │   │   ├── ScoreCardSkeleton.tsx     # Skeleton loader for score card
+│   │   ├── MetricsSkeleton.tsx       # Skeleton loader for metrics
 │   │   ├── LeaderboardContent.tsx    # Paginated leaderboard client component
 │   │   ├── LeaderboardTable.tsx      # Leaderboard table display
 │   │   ├── LeaderboardSkeleton.tsx   # Skeleton loader for leaderboard
-│   │   ├── SubmissionForm.tsx        # Code submission form
-│   │   ├── NavBar.tsx                # Navigation bar
+│   │   ├── CodeEditorSection.tsx     # Code submission editor section
+│   │   ├── HomeMetrics.tsx           # Home page metrics display
+│   │   ├── HomeMetricsSection.tsx    # Metrics section wrapper
+│   │   ├── HomeLeaderboardSection.tsx # Home page leaderboard preview
+│   │   ├── HomeLeaderboardSkeleton.tsx # Skeleton for home leaderboard
 │   │   └── index.ts                  # Main component export
 │   │
 │   ├── db/                           # Database layer
 │   │   ├── schema/                   # Drizzle ORM schema definitions
-│   │   │   ├── submissions.ts        # Submissions table
+│   │   │   ├── submissions.ts        # Submissions table and enums
 │   │   │   ├── feedback.ts           # Feedback table
 │   │   │   ├── roasts.ts             # Roasts/leaderboard table
 │   │   │   └── index.ts              # Re-exports
 │   │   ├── queries/                  # Drizzle ORM queries
 │   │   │   ├── submissions.ts        # Submission queries
 │   │   │   ├── feedback.ts           # Feedback queries
-│   │   │   ├── roasts.ts             # Roast queries
+│   │   │   ├── roasts.ts             # Roast/leaderboard queries
 │   │   │   └── index.ts              # Re-exports
 │   │   └── client.ts                 # Database connection
 │   │
 │   ├── server/                       # Server-side logic
 │   │   ├── trpc/                     # tRPC setup
+│   │   │   ├── init.ts               # tRPC initialization
 │   │   │   ├── router.ts             # Main router
-│   │   │   ├── context.ts            # Request context
-│   │   │   ├── server.tsx            # Server-side TRPC caller
+│   │   │   ├── server.tsx            # Server-side tRPC caller
 │   │   │   └── routes/               # Route handlers
-│   │   │       └── submissions.ts    # Submission procedures
+│   │   │       ├── submissions.ts    # Submission procedures
+│   │   │       └── metrics.ts        # Metrics and leaderboard procedures
 │   │   ├── lib/                      # Server utilities
-│   │   │   ├── submissions.ts        # Submission processing
+│   │   │   ├── submissions.ts        # Submission processing and feedback generation
 │   │   │   ├── gemini.ts             # Gemini API integration
-│   │   │   ├── rate-limiter.ts       # Rate limiting
-│   │   │   └── logging.ts            # Logging utilities
+│   │   │   └── rate-limiter.ts       # Rate limiting
 │   │   └── env.ts                    # Environment validation
 │   │
 │   ├── lib/                          # Client/shared utilities
-│   │   ├── severity.ts               # Severity calculation
+│   │   ├── severity.ts               # Severity score calculation
 │   │   └── trpc.ts                   # tRPC client setup
 │   │
+│   ├── utils/                        # Utility functions
+│   │   └── language.ts               # Language utilities
+│   │
+│   ├── data/                         # Mock/sample data
+│   │   └── submissions.ts            # Sample submission data
+│   │
 │   └── types/                        # TypeScript types
-│       └── index.ts                  # Shared types
+│       └── css.d.ts                  # CSS module types
 │
 ├── drizzle/                          # Database migrations
 │   └── migrations/                   # Auto-generated migration files
@@ -214,7 +225,7 @@ devroast/
 │   └── init.sql                      # SQL initialization
 │
 ├── specs/                            # Project specifications
-│   └── CODE_SUBMISSION_IMPLEMENTATION.md
+│   └── CODE_SUBMISSION_IMPLEMENTATION.md  # Code submission system spec
 │
 ├── docker-compose.yml                # Docker compose for local dev
 ├── drizzle.config.ts                 # Drizzle ORM config
@@ -223,6 +234,8 @@ devroast/
 ├── biome.json                        # Code linting/formatting
 ├── tsconfig.json                     # TypeScript config
 ├── package.json                      # Dependencies
+├── AGENTS.md                         # Development guide for agents
+├── DATABASE.md                       # Database setup guide
 └── README.md                         # This file
 ```
 
@@ -728,7 +741,7 @@ CREATE INDEX idx_roasts_severity ON roasts(severity_rating DESC);
 ### Rate Limiting
 
 Rate limits prevent abuse:
-- **Per-IP**: 10 submissions per hour (configurable)
+- **Per-IP**: 5 submissions per hour (configurable)
 - **Global**: 30-second cooldown between all submissions
 
 Adjust in `src/server/lib/rate-limiter.ts` as needed.
@@ -772,7 +785,6 @@ Consider adding Redis for:
 - `TESTING.md` - Testing guide and examples
 
 ### Related Files
-- `.env.local.example` - Environment template
 - `docker-compose.yml` - Docker configuration
 - `tailwind.config.js` - Tailwind configuration
 - `tsconfig.json` - TypeScript configuration

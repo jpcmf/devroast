@@ -278,7 +278,7 @@ The code submission system handles user submissions, generates AI feedback, and 
 - **Error Handling**: Comprehensive logging for debugging API failures
 
 **`src/server/lib/rate-limiter.ts`** - Rate limiting
-- Per-IP submission limit (configurable, default: 10 per hour)
+- Per-IP submission limit (configurable, default: 5 per hour)
 - Global cooldown between submissions (30 seconds)
 - Extraction of client IP from various proxy headers (x-forwarded-for, cf-connecting-ip, x-real-ip)
 
