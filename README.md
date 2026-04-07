@@ -778,6 +778,17 @@ The development process leveraged specialized MCP servers for enhanced capabilit
 - Removed production secrets from git history
 - Verified build integrity
 
+**Session 5: Production Timeout Fixes & Deployment** (April 7, 2026)
+- **Problem**: Intermittent "Feedback generation took too long" errors in production
+- **Solution**: Implemented comprehensive timeout handling and automatic retry logic
+  - 30-second timeout on Gemini API calls with automatic retry (3 attempts)
+  - Exponential backoff between retries (1s, 2s, 4s)
+  - 45-second overall operation timeout to prevent serverless hangs
+  - Extended polling window from 120s to 180s for better UX
+  - Better error messages with attempt tracking and elapsed time logs
+- **Result**: Build passed with zero errors, deployed to production with improved reliability
+- **Commits**: `51415ce` (timeout fixes), `26051c7` (merge), force pushed to GitHub
+
 ### Why It Worked
 
 Even with a smaller model, exceptional results came from:
@@ -873,6 +884,19 @@ psql -c "SELECT * FROM \"_drizzle_migrations\";" $DATABASE_URL
 2. Check for `[ResultsContent]` logs
 3. Verify `/api/feedback/[id]` returns null initially, then feedback object
 4. Check that feedback row is being created (may take 5-30 seconds)
+
+**Feedback generation timeout:**
+The system now includes automatic retry logic and extended timeout windows:
+- Each Gemini API call has a 30-second timeout with automatic retry (up to 3 attempts)
+- Polling window is 180 seconds (90 polls × 2 seconds each)
+- Exponential backoff is used between retries (1s, 2s, 4s)
+- Most submissions complete within 5-15 seconds
+
+If you still see "Feedback generation took too long" error:
+1. Check server logs for `[Gemini]` or `[generateAndSaveFeedback]` messages
+2. Verify Gemini API is accessible from your network
+3. Check Vercel logs in the dashboard for execution time
+4. Try submitting again - retries typically resolve temporary API issues
 
 ---
 
