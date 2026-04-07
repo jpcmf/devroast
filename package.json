@@ -34,6 +34,7 @@
 		"@codemirror/state": "^6.6.0",
 		"@codemirror/view": "^6.40.0",
 		"@number-flow/react": "^0.6.0",
+		"@supabase/supabase-js": "^2.102.1",
 		"@tailwindcss/postcss": "^4.2.1",
 		"@trpc/client": "^11.16.0",
 		"@trpc/server": "^11.16.0",
