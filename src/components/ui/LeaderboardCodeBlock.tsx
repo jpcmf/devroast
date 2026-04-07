@@ -1,4 +1,7 @@
+'use client'
+
 import type { HTMLAttributes } from "react";
+import { useEffect, useState } from "react";
 import { codeToHtml } from "shiki";
 
 interface LeaderboardCodeBlockProps extends HTMLAttributes<HTMLDivElement> {
@@ -8,7 +11,7 @@ interface LeaderboardCodeBlockProps extends HTMLAttributes<HTMLDivElement> {
 	maxHeight?: string;
 }
 
-async function LeaderboardCodeBlock({
+export function LeaderboardCodeBlock({
 	code,
 	language = "javascript",
 	theme = "vesper",
@@ -16,19 +19,60 @@ async function LeaderboardCodeBlock({
 	className,
 	...props
 }: LeaderboardCodeBlockProps) {
-	let html: string;
+	const [html, setHtml] = useState<string>("");
+	const [isLoading, setIsLoading] = useState(true);
 
-	try {
-		html = await codeToHtml(code, {
-			lang: language,
-			theme,
-		});
-	} catch (error) {
-		// Fallback to plain text if language is not supported
-		html = await codeToHtml(code, {
-			lang: "plaintext",
-			theme,
-		});
+	useEffect(() => {
+		let isMounted = true;
+
+		const highlightCode = async () => {
+			try {
+				const highlighted = await codeToHtml(code, {
+					lang: language,
+					theme,
+				});
+				if (isMounted) {
+					setHtml(highlighted);
+				}
+			} catch (error) {
+				// Fallback to plain text if language is not supported
+				try {
+					const plaintext = await codeToHtml(code, {
+						lang: "plaintext",
+						theme,
+					});
+					if (isMounted) {
+						setHtml(plaintext);
+					}
+				} catch {
+					// Final fallback: render plain text
+					if (isMounted) {
+						setHtml(`<pre>${code}</pre>`);
+					}
+				}
+			} finally {
+				if (isMounted) {
+					setIsLoading(false);
+				}
+			}
+		};
+
+		highlightCode();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [code, language, theme]);
+
+	if (isLoading) {
+		return (
+			<div
+				className={`${maxHeight} overflow-y-auto bg-gray-800 rounded border border-gray-700 px-3 py-2 text-xs font-jetbrains-mono ${className || ""}`}
+				{...props}
+			>
+				<div className="text-gray-600 animate-pulse">loading...</div>
+			</div>
+		);
 	}
 
 	return (
@@ -45,4 +89,4 @@ async function LeaderboardCodeBlock({
 	);
 }
 
-export { LeaderboardCodeBlock, type LeaderboardCodeBlockProps };
+export type { LeaderboardCodeBlockProps };
