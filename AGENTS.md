@@ -223,6 +223,7 @@ pnpm check         # Run all Biome checks
 The following features are now complete with real data integration:
 - ✅ **Metrics Display** - Home page metrics showing total roasts and average score with animations
 - ✅ **Leaderboard Pages** - Full leaderboard page with real database data
+- ✅ **Leaderboard Pagination** - Server-side pagination with 10 items per page and client-side controls
 - ✅ **Home Leaderboard Preview** - Top 3 worst submissions preview on home page
 - ✅ **Results Page** - Dynamic results page that fetches from database with fallback to mock data
 - ✅ **tRPC Integration** - Complete server-client RPC layer with type safety
@@ -230,13 +231,14 @@ The following features are now complete with real data integration:
 - ✅ **AI Feedback Generation** - Gemini API integration for code analysis (standard + roast modes)
 - ✅ **Real-time Score Card** - Skeleton loading + instant updates when feedback arrives
 - ✅ **Async Feedback Processing** - Background task processing with `setImmediate()`
+- ✅ **Database Cleanup** - Reduced database to 15 most recent submissions
 
 ## What NOT to Build Now
 
 The following components are designed but deferred until feature building:
 - **Diff Line** - For code comparison views
 - **Score Ring** - For score visualization
-- **Advanced Filtering/Sorting** - For leaderboard pagination and filtering
+- **Advanced Filtering/Sorting** - For leaderboard advanced filtering and sorting beyond basic pagination
 
 Build these only when their respective features are needed.
 
@@ -344,6 +346,120 @@ The code submission system handles user submissions, generates AI feedback, and 
 **API Settings**:
 - Gemini Model: `gemini-flash-latest` (fast, cost-effective)
 - Gemini Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`
+
+## Leaderboard Pagination System
+
+### Architecture Overview
+
+The leaderboard implements server-side pagination with client-side navigation controls for efficient data loading and better UX.
+
+**Flow**:
+1. Leaderboard page loads → server fetches first page (page 1, pageSize 10)
+2. `LeaderboardInitial` async server component loads initial data
+3. Page renders with `LeaderboardContent` client component
+4. User clicks pagination buttons → client fetches new page via tRPC
+5. Data updates in-place without page reload
+
+### Key Components
+
+#### Server-Side (Backend)
+
+**`src/server/trpc/routes/metrics.ts`** - tRPC pagination procedure
+- **Procedure**: `metrics.getLeaderboard`
+- **Input**: `{ page: number, pageSize: number }`
+- **Validation**: page ≥ 1, pageSize between 1-100
+- **Calculation**: `offset = (page - 1) * pageSize`
+- **Returns**: Structured response with items array and pagination metadata
+  ```typescript
+  {
+    items: [{ id, rank, score, code, language, createdAt }, ...],
+    pagination: { page, pageSize, totalCount, totalPages }
+  }
+  ```
+- **Database Query**: Uses `LIMIT` and `OFFSET` for efficient pagination
+
+#### Client-Side (Frontend)
+
+**`src/components/LeaderboardContent.tsx`** - Client component managing pagination
+- **Conversion**: Converted from server component to client component (`'use client'`)
+- **State Management**: Manages `currentPage`, `data`, `isLoading`
+- **Page Change Handler**: 
+  - Validates page number bounds
+  - Fetches new data via `/api/trpc/metrics.getLeaderboard`
+  - Parses tRPC response structure
+  - Updates state and scrolls to top smoothly
+- **Pagination Controls**:
+  - Previous/Next buttons (disabled at boundaries)
+  - Smart page numbers with ellipsis (...) for gaps
+  - Shows only: first page, last page, current page, ±1 adjacent pages
+  - Page info display: "page X of Y • Z total"
+- **Error Handling**: Catches fetch errors and logs to console
+
+**`src/app/leaderboard/page.tsx`** - Leaderboard page structure
+- **Server Component**: Parent async component that fetches stats and initial data
+- **LeaderboardInitial**: Async server component that fetches first page
+- **Suspense Boundary**: Wraps pagination with skeleton loader fallback
+
+### Database Queries
+
+The pagination queries are optimized with:
+- `OFFSET (page - 1) * pageSize LIMIT pageSize` for efficient record fetching
+- `COUNT(*)` for total count (used only once at page render)
+- Ordering by severity score DESC for consistent ranking
+
+### Implementation Details
+
+#### Pagination Controls Logic
+
+```typescript
+// Smart page number display
+const visiblePages = [1, lastPage, currentPage, currentPage - 1, currentPage + 1]
+  .filter(page => page >= 1 && page <= lastPage)
+  .sort((a, b) => a - b)
+  .filter((page, idx, arr) => {
+    // Remove duplicates, add ellipsis between gaps
+    const prevPage = arr[idx - 1];
+    return idx === 0 || page !== prevPage;
+  })
+
+// Shows: [1] ... [2] [3] [4] ... [N] (with ellipsis between gaps)
+```
+
+#### Client Fetch Pattern
+
+```typescript
+const response = await fetch(
+  `/api/trpc/metrics.getLeaderboard?input=${JSON.stringify({ page: newPage, pageSize })}`
+);
+const result = await response.json();
+// result.result.data contains the pagination response
+setData(result.result.data);
+```
+
+### Common Pagination Tasks
+
+#### Adjust Page Size
+Change `pageSize` constant in `LeaderboardContent.tsx:35` from `10` to desired value (1-100).
+
+#### Modify Pagination Controls Display
+Update filtering logic in `LeaderboardContent.tsx:88-93` to show different page numbers or change ellipsis display.
+
+#### Debug Pagination Issues
+1. Check browser console for fetch errors
+2. Verify `/api/trpc/metrics.getLeaderboard` returns correct structure
+3. Check database for total submission count: `SELECT COUNT(*) FROM roasts;`
+4. Verify pagination response: `console.log('Pagination data:', data);`
+
+#### Test Different Page Counts
+```bash
+# Check current submission count
+psql $DATABASE_URL -c "SELECT COUNT(*) FROM roasts;"
+
+# Results with 15 submissions:
+# - 2 pages with pageSize 10
+# - 3 pages with pageSize 5
+# - 5 pages with pageSize 3
+```
 
 ### Common Tasks
 
