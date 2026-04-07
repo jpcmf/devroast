@@ -7,3 +7,5 @@ node_modules/
 .idea/
 .vscode/
 next-env.d.ts
+playwright-report/
+test-results/
