@@ -45,6 +45,12 @@ All components are located in `src/components/ui/` and follow a consistent patte
 - **Pattern**: Async server component (no `'use client'`)
 - **Key**: Renders syntax-highlighted code on server side
 
+### 6. ScoreCardSkeleton
+- **Features**: Animated skeleton loading state for score cards
+- **Pattern**: Client component with pulsing animation
+- **Key**: Shows placeholder boxes while AI feedback is being generated
+- **Location**: `src/components/ScoreCardSkeleton.tsx`
+
 ## Component Creation Pattern
 
 ### File Structure
@@ -220,6 +226,10 @@ The following features are now complete with real data integration:
 - ✅ **Home Leaderboard Preview** - Top 3 worst submissions preview on home page
 - ✅ **Results Page** - Dynamic results page that fetches from database with fallback to mock data
 - ✅ **tRPC Integration** - Complete server-client RPC layer with type safety
+- ✅ **Code Submission** - Full submission workflow with rate limiting and validation
+- ✅ **AI Feedback Generation** - Gemini API integration for code analysis (standard + roast modes)
+- ✅ **Real-time Score Card** - Skeleton loading + instant updates when feedback arrives
+- ✅ **Async Feedback Processing** - Background task processing with `setImmediate()`
 
 ## What NOT to Build Now
 
@@ -230,4 +240,137 @@ The following components are designed but deferred until feature building:
 
 Build these only when their respective features are needed.
 
+## Code Submission & AI Feedback System
 
+### Architecture Overview
+
+The code submission system handles user submissions, generates AI feedback, and displays results with real-time updates.
+
+**Flow**:
+1. User submits code via form → tRPC `submissions.create` endpoint
+2. Submission stored in database, user redirected to results page
+3. Background task generates AI feedback using Gemini API
+4. Results page polls for feedback and updates score card in real-time
+5. Feedback displayed with calculated severity breakdown
+
+### Key Components
+
+#### Server-Side (Backend)
+
+**`src/server/trpc/routes/submissions.ts`** - tRPC submission endpoint
+- **Procedure**: `submissions.create`
+- **Validation**: Code length (1-50k chars), language enum, roast mode boolean
+- **Rate Limiting**: Per-IP limit + global 30-second cooldown
+- **HTML Injection Protection**: Blocks `<script>`, `<style>`, `<img>`, etc. tags
+- **Background Processing**: Uses `setImmediate()` to trigger async feedback generation
+
+**`src/server/lib/submissions.ts`** - Submission processing
+- `createNewSubmission()` - Creates submission record in database
+- `generateAndSaveFeedback()` - Generates AI feedback and saves to database
+- Handles severity score normalization (1-10 → 1-100 scale)
+
+**`src/server/lib/gemini.ts`** - Gemini API integration
+- `generateFeedback()` - Calls Gemini Flash model with code analysis prompt
+- **Modes**: Standard (professional) and Roast (sarcastic)
+- **Output**: Extracts severity score (1-10), counts issues and recommendations
+- **Error Handling**: Comprehensive logging for debugging API failures
+
+**`src/server/lib/rate-limiter.ts`** - Rate limiting
+- Per-IP submission limit (configurable, default: 10 per hour)
+- Global cooldown between submissions (30 seconds)
+- Extraction of client IP from various proxy headers (x-forwarded-for, cf-connecting-ip, x-real-ip)
+
+**`src/app/api/feedback/[id]/route.ts`** - Feedback API endpoint
+- **Route**: `GET /api/feedback/[submissionId]`
+- **Returns**: Latest feedback for a submission or null if not yet generated
+- **Used by**: Results page polling mechanism
+
+#### Client-Side (Frontend)
+
+**`src/app/results/[id]/ResultsContent.tsx`** - Results page client component
+- **Polling**: Checks for feedback every 2 seconds (120-second timeout)
+- **Real-time Updates**: Calculates and updates score card when feedback arrives
+- **State Management**: Tracks `isLoading`, `aiFeedback`, `shameScore`, `severityScore`, `roastSummary`
+- **Skeleton Loading**: Shows `ScoreCardSkeleton` while waiting for feedback
+- **Instant Display**: No page reload needed - updates happen in-place
+
+**`src/lib/severity.ts`** - Severity calculation utility
+- `extractSeverityBreakdown()` - Calculates critical/warning/good issue counts
+- **Inputs**: AI feedback object, severity score (0-100)
+- **Outputs**: `{ critical: number, warning: number, good: number }`
+- **Used by**: Both server (initial render) and client (real-time updates)
+
+**`src/components/ScoreCardSkeleton.tsx`** - Loading skeleton
+- Animated placeholder matching score card layout
+- Pulsing gray boxes for: score number, "/10" text, issue indicators
+- Smooth transition when content loads
+
+### Database Schema
+
+**`submissions` table**:
+```typescript
+{
+  id: uuid,
+  code: string,
+  language: enum,
+  roastMode: boolean,
+  severityScore: integer (0-100),
+  viewCount: integer,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+**`feedback` table**:
+```typescript
+{
+  id: uuid,
+  submissionId: uuid (FK),
+  feedbackType: enum ('standard' | 'roast'),
+  content: text,
+  issuesFound: integer,
+  recommendationsCount: integer,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+### Configuration
+
+**Environment Variables**:
+- `GEMINI_API_KEY` - Google Gemini API key (required for AI generation)
+- `DATABASE_URL` - PostgreSQL connection string
+
+**API Settings**:
+- Gemini Model: `gemini-flash-latest` (fast, cost-effective)
+- Gemini Endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`
+
+### Common Tasks
+
+#### Submit Test Code
+```bash
+curl -X POST "http://localhost:3000/api/trpc/submissions.create" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "function test() { return 1; }",
+    "language": "javascript",
+    "roastMode": true
+  }'
+```
+
+#### Check Feedback Generation
+Monitor logs for `[Submissions]` and `[Gemini]` prefixed messages. Check database:
+```sql
+SELECT s.id, s.created_at, f.created_at, f.content 
+FROM submissions s 
+LEFT JOIN feedback f ON s.id = f.submission_id 
+ORDER BY s.created_at DESC LIMIT 5;
+```
+
+#### Debug Polling Issues
+- Check browser console for `[ResultsContent]` logs
+- Verify `/api/feedback/[id]` endpoint returns null initially, then feedback object
+- Check database that feedback row is being created (might take 5-30 seconds)
+
+#### Extend Severity Calculation
+Modify `src/lib/severity.ts` `extractSeverityBreakdown()` function to change how critical/warning/good counts are calculated based on feedback content.
