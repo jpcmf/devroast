@@ -450,13 +450,13 @@ Add to `package.json`:
 ```json
 {
   "dependencies": {
-    "drizzle-orm": "^0.30.0",
-    "drizzle-kit": "^0.20.0",
-    "pg": "^8.11.0",
-    "dotenv": "^16.3.1"
+    "drizzle-orm": "^0.45.2",
+    "drizzle-kit": "^0.20.14",
+    "pg": "^8.13.1",
+    "dotenv": "^17.3.1"
   },
   "devDependencies": {
-    "@types/pg": "^8.11.0"
+    "@types/pg": "^8.20.0"
   },
   "scripts": {
     "db:generate": "drizzle-kit generate",
